@@ -11,7 +11,8 @@
   /* ---------- Header ---------- */
   const nav = [
     ['index.html', 'Trang chủ', 'home'], ['index.html#gioi-thieu', 'Giới thiệu', 'about'],
-    ['san-pham.html', 'Sản phẩm', 'products'], ['du-an.html', 'Dự án', 'projects'], ['index.html#lien-he', 'Liên hệ', 'contact']
+    ['du-an.html', 'Dự án', 'projects'],
+    ['doi-tac.html', 'Đối tác', 'partners'], ['index.html#lien-he', 'Liên hệ', 'contact']
   ];
   const header = `
   <div class="topbar"><div class="container">
@@ -32,7 +33,7 @@
     <div class="footer-grid">
       <div><div class="logo-w"><img src="img/logo-icon.png" alt=""><b>ReMate</b></div>
         <p style="font-size:14.5px">${S.fullName}<br><i>${S.slogan}</i></p>
-        <div class="socials"><a class="social fb" href="${S.facebook}" target="_blank" rel="noopener">${ic('facebook')}Facebook</a><a class="social zl" href="${S.zalo}" target="_blank" rel="noopener">Zalo</a></div></div>
+        <div class="socials"><a class="social fb" href="${S.facebook}" target="_blank" rel="noopener noreferrer">${ic('facebook')}Facebook</a><a class="social zl" href="${S.zalo}" target="_blank" rel="noopener noreferrer">Zalo</a>${S.tiktok ? `<a class="social tt" href="${S.tiktok}" target="_blank" rel="noopener noreferrer">${ic('tiktok')} TikTok</a>` : ''}</div></div>
       <div><h4>Danh mục</h4><ul>${nav.map(([h, t]) => `<li><a href="${h}">${t}</a></li>`).join('')}</ul></div>
       <div><h4>Lĩnh vực</h4><ul>${S.services.map((s) => `<li>${s.title}</li>`).join('')}</ul></div>
       <div><h4>Liên hệ</h4><ul>
@@ -43,8 +44,9 @@
   </div></footer>
   <div class="float">
     <a class="f-fb" href="${S.facebook}" target="_blank" rel="noopener" title="Facebook">${ic('facebook')}</a>
-    <a class="f-zl" href="${S.zalo}" target="_blank" rel="noopener" title="Chat Zalo">${ic('zalo')}</a>
-    <a class="f-ph" href="tel:${S.phoneRaw}" title="Gọi ${S.phone}">${ic('phone')}</a>
+    <a class="f-zl" href="${S.zalo}" target="_blank" rel="noopener noreferrer" title="Chat Zalo" aria-label="Chat Zalo">${ic('zalo')}</a>
+    ${S.tiktok ? `<a class="f-tt" href="${S.tiktok}" target="_blank" rel="noopener noreferrer" title="TikTok ReMate (cập nhật liên kết chính thức trong config.js)" aria-label="TikTok">${ic('tiktok')}</a>` : ''}
+    <a class="f-ph" href="tel:${S.phoneRaw}" title="Gọi ${S.phone}" aria-label="Gọi ${S.phone}">${ic('phone')}</a>
   </div>
   <div class="toast" id="toast"></div>
   <div class="lightbox" id="lightbox"><img alt=""></div>`;

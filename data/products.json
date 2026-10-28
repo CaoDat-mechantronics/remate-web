@@ -52,39 +52,5 @@
     "published": true,
     "createdAt": "2026-10-28T05:00:00.000Z",
     "updatedAt": "2026-10-28T05:00:00.000Z"
-  },
-  {
-    "title": "Máy nén khí",
-    "category": "Vật tư công nghiệp",
-    "summary": "Máy nén khi công suất cao",
-    "content": "",
-    "images": [
-      "/uploads/1793201750554-8bb476e3.jpg",
-      "/uploads/1793201750558-ecb30ec3.jpg"
-    ],
-    "featured": false,
-    "published": true,
-    "condition": "Mới 100%",
-    "price": "450000",
-    "quantity": "1",
-    "origin": "Trung Quốc",
-    "specs": [
-      {
-        "key": "Công suất",
-        "value": "1000W"
-      },
-      {
-        "key": "Trọng lượng",
-        "value": "100kg"
-      },
-      {
-        "key": "Pin",
-        "value": "3700mAh"
-      }
-    ],
-    "id": "6a1d23f73658",
-    "slug": "may-nen-khi-6a1d",
-    "createdAt": "2026-10-28T15:35:50.565Z",
-    "updatedAt": "2026-10-28T15:35:50.565Z"
   }
 ]

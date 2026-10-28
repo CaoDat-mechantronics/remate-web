@@ -27,8 +27,8 @@
         <h1 id="headline"></h1>
         <p id="intro"></p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="san-pham.html">Xem sản phẩm</a>
-          <a class="btn btn-outline" href="du-an.html">Dự án đã thực hiện</a>
+          <a class="btn btn-primary" href="san-pham.html">Sản phẩm kinh doanh</a>
+          <a class="btn btn-outline" href="dich-vu.html">Dịch vụ cung cấp</a>
         </div>
       </div>
     </div>
@@ -80,10 +80,41 @@
   </div>
 </section>
 
+
+<!-- ===== ĐỐI TÁC & HỢP TÁC ===== -->
+<section class="section partners-home" id="doi-tac">
+  <div class="container partners-home-layout">
+    <div class="partners-home-intro reveal">
+      <span class="eyebrow partners-eyebrow">Mạng lưới hợp tác</span>
+      <h2>Kết nối nguồn lực.<br><span>Cùng tạo giá trị bền vững.</span></h2>
+      <p>ReMate hướng tới kết nối với các đơn vị cung ứng, doanh nghiệp sản xuất và đối tác kỹ thuật để cùng phát triển những giải pháp hiệu quả, thiết thực và có trách nhiệm với tài nguyên.</p>
+      <div class="partners-home-actions">
+        <a href="doi-tac.html" class="btn btn-primary">Khám phá cơ hội hợp tác <span aria-hidden="true">→</span></a>
+        <a href="mailto:Datnguyenvan1903@gmail.com" class="partners-text-link">Liên hệ hợp tác <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="partners-home-values" aria-label="Định hướng hợp tác">
+        <span><span aria-hidden="true">✓</span> Minh bạch</span>
+        <span><span aria-hidden="true">✓</span> Linh hoạt</span>
+        <span><span aria-hidden="true">✓</span> Cùng phát triển</span>
+      </div>
+    </div>
+    <div class="partner-orbit reveal" aria-label="Mạng lưới các lĩnh vực hợp tác của ReMate">
+      <div class="partner-orbit-line one"></div><div class="partner-orbit-line two"></div>
+      <div class="partner-orbit-core"><img src="img/logo-icon.png" alt="Biểu tượng ReMate"><strong>ReMate</strong><small>Hợp tác bền vững</small></div>
+      <span class="partner-orbit-node node-1">Vật tư & máy móc</span>
+      <span class="partner-orbit-node node-2">Bảo trì thiết bị</span>
+      <span class="partner-orbit-node node-3">Thiết kế & chế tạo</span>
+      <span class="partner-orbit-node node-4">Tiết kiệm năng lượng</span>
+      <span class="partner-orbit-dot dot-1"></span><span class="partner-orbit-dot dot-2"></span>
+    </div>
+  </div>
+  <div class="container" id="homePartnerProfiles" hidden></div>
+</section>
+
 <!-- ===== LIÊN HỆ ===== -->
 <section class="section" id="lien-he">
   <div class="container">
-    <div class="sec-head"><div><span class="eyebrow">Liên hệ</span><h2>Kết nối với ReMate</h2><p>Gọi điện, nhắn Zalo hoặc ghé thăm chúng tôi để được tư vấn miễn phí.</p></div></div>
+    <div class="sec-head"><div><span class="eyebrow">Liên hệ</span><h2>Kết nối với ReMate</h2><p>Liên hệ qua điện thoại, Zalo, TikTok hoặc ghé thăm chúng tôi để trao đổi nhu cầu của doanh nghiệp.</p></div></div>
     <div class="contact">
       <div class="reveal">
         <div class="contact-list" id="contactList"></div>
@@ -97,6 +128,7 @@
 <div id="site-footer"></div>
 <script src="js/config.js"></script>
 <script src="js/common.js"></script>
+<script src="js/partners.js"></script>
 <script>
 (function () {
   const S = SITE;
@@ -123,6 +155,7 @@
   document.getElementById('contactSocials').innerHTML =
     `<a class="social fb" href="${S.facebook}" target="_blank" rel="noopener">${ic('facebook')} Fanpage Facebook</a>
      <a class="social zl" href="${S.zalo}" target="_blank" rel="noopener">Chat Zalo: ${S.phone}</a>
+     ${S.tiktok ? `<a class="social tt" href="${S.tiktok}" target="_blank" rel="noopener noreferrer">${ic('tiktok')} TikTok</a>` : ''}
      <a class="social ph" href="tel:${S.phoneRaw}">${ic('phone')} Gọi ngay</a>`;
   document.getElementById('map').src = S.mapEmbed;
 
@@ -140,6 +173,7 @@
   }
   load('products', 'homeProducts'); load('projects', 'homeProjects');
   onLiveChange((d) => {
+    if (d.type !== 'products' && d.type !== 'projects') return;
     load(d.type, d.type === 'products' ? 'homeProducts' : 'homeProjects');
     if (d.action === 'create') toast(d.type === 'products' ? '🆕 Có sản phẩm mới vừa được đăng!' : '🆕 Có dự án mới vừa được cập nhật!');
   });

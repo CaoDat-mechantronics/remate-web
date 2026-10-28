@@ -83,3 +83,13 @@ legend small{font-weight:400;color:var(--muted)}
 .auth-gate[hidden]{display:none}
 .auth-spinner{width:32px;height:32px;border-radius:50%;border:3px solid var(--g200);border-top-color:var(--g700);animation:remate-spin .8s linear infinite}
 @keyframes remate-spin{to{transform:rotate(360deg)}}
+
+/* Quản lý Đối tác */
+.partner-admin-note{font-size:13px;line-height:1.65;color:var(--muted);padding:11px 13px;border-radius:9px;background:var(--g100)}
+.admin .tab[data-type="partners"].active{background:var(--g700);border-color:var(--g700);color:#fff}
+.admin #pvCard .partner-profile{min-height:0}
+.admin #pvCard .partner-preview-url{color:var(--g700);font-size:13px;font-weight:700}
+
+.admin.partner-mode .imgs img{object-fit:contain;background:#f3f7f1;padding:7px}
+.admin.partner-mode .imgs .it:first-child::after{content:"Logo đối tác"}
+.admin.partner-mode .post img{object-fit:contain;background:#f3f7f1}

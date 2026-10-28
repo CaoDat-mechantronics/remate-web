@@ -30,6 +30,7 @@
     <div class="tabs">
       <button class="tab active" data-type="products">📦 Sản phẩm</button>
       <button class="tab" data-type="projects">🏗️ Dự án</button>
+      <button class="tab" data-type="partners">🤝 Đối tác</button>
     </div>
 
     <div class="a-grid">
@@ -38,14 +39,14 @@
         <div class="panel-h"><h3 id="formTitle">Đăng sản phẩm mới</h3><button type="button" class="btn btn-sm btn-light" id="resetBtn">+ Bài mới</button></div>
 
         <fieldset><legend>1. Thông tin chính</legend>
-          <label>Tên <span class="req">*</span><input name="title" required maxlength="200" placeholder="VD: Máy nén khí trục vít 37kW đã qua sử dụng"></label>
+          <label><span><span id="mainTitleLabel">Tên</span> <span class="req">*</span></span><input name="title" required maxlength="200" placeholder="VD: Máy nén khí trục vít 37kW đã qua sử dụng"></label>
           <div class="row2">
-            <label>Danh mục / Lĩnh vực<input name="category" list="catList" placeholder="Chọn hoặc nhập mới"></label>
+            <label><span id="categoryLabel">Danh mục / Lĩnh vực</span><input name="category" list="catList" placeholder="Chọn hoặc nhập mới"></label>
             <label class="only-p">Giá<input name="price" placeholder="VD: 45.000.000 đ hoặc Liên hệ"></label>
             <label class="only-j">Thời gian thực hiện<input name="time" placeholder="VD: 03/2026 – 05/2026"></label>
           </div>
           <datalist id="catList"></datalist>
-          <label>Mô tả ngắn (hiển thị trên thẻ) <span class="req">*</span><textarea name="summary" rows="2" maxlength="500" required placeholder="1–2 câu tóm tắt"></textarea></label>
+          <label><span><span id="summaryLabel">Mô tả ngắn (hiển thị trên thẻ)</span> <span class="req">*</span></span><textarea name="summary" rows="2" maxlength="500" required placeholder="1–2 câu tóm tắt"></textarea></label>
         </fieldset>
 
         <fieldset class="only-p"><legend>2. Thông số sản phẩm</legend>
@@ -59,6 +60,13 @@
           <div id="specs"></div>
         </fieldset>
 
+        <fieldset class="only-partner"><legend>2. Thông tin đối tác</legend>
+          <label>Website đối tác (không bắt buộc)
+            <input name="website" type="url" placeholder="https://ten-cong-ty.vn" inputmode="url" maxlength="500">
+          </label>
+          <p class="partner-admin-note">Chỉ đăng tên, logo và thông tin khi đối tác đã đồng ý cho ReMate công bố. Có thể để trống website.</p>
+        </fieldset>
+
         <fieldset class="only-j"><legend>2. Thông tin dự án</legend>
           <div class="row2">
             <label>Khách hàng / Chủ đầu tư<input name="client" placeholder="VD: Công ty TNHH ABC"></label>
@@ -68,18 +76,18 @@
           <label>Kết quả đạt được<textarea name="result" rows="2" placeholder="VD: Giảm 18% điện năng tiêu thụ…"></textarea></label>
         </fieldset>
 
-        <fieldset><legend>3. Hình ảnh <small>(ảnh đầu tiên là ảnh đại diện – tối đa 12 ảnh)</small></legend>
+        <fieldset><legend>3. <span id="mediaTitle">Hình ảnh</span> <small id="mediaHint">(ảnh đầu tiên là ảnh đại diện – tối đa 12 ảnh)</small></legend>
           <label class="drop" id="drop"><input type="file" id="fileIn" accept="image/*" multiple hidden>
             <span>📷 Kéo thả ảnh vào đây hoặc <u>bấm để chọn</u><br><small>Ảnh tự động nén ≤ 1600px</small></span></label>
           <div class="imgs" id="imgs"></div>
         </fieldset>
 
-        <fieldset><legend>4. Nội dung chi tiết</legend>
+        <fieldset class="only-post"><legend>4. Nội dung chi tiết</legend>
           <textarea name="content" rows="7" placeholder="Mô tả chi tiết, ưu điểm, điều kiện bảo hành, quy trình thực hiện…"></textarea>
         </fieldset>
 
         <fieldset class="flags">
-          <label class="chk"><input type="checkbox" name="featured"> Nổi bật (ưu tiên trang chủ)</label>
+          <label class="chk"><input type="checkbox" name="featured"> <span id="featuredLabel">Nổi bật (ưu tiên trang chủ)</span></label>
           <label class="chk"><input type="checkbox" name="published" checked> Hiển thị công khai</label>
         </fieldset>
 

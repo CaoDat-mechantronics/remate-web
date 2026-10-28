@@ -53,6 +53,7 @@
             <a class="btn btn-primary" href="tel:${SITE.phoneRaw}">${ic('phone')} Gọi ${SITE.phone}</a>
             <a class="btn" style="background:#0068ff;color:#fff" href="${SITE.zalo}" target="_blank" rel="noopener">Nhắn Zalo</a>
             <a class="btn btn-outline" href="${SITE.facebook}" target="_blank" rel="noopener">${ic('facebook')} Facebook</a>
+            ${SITE.tiktok ? `<a class="btn btn-outline" href="${SITE.tiktok}" target="_blank" rel="noopener noreferrer">${ic('tiktok')} TikTok</a>` : ''}
           </div>
           <p style="color:var(--muted);font-size:13px;margin-top:14px">Cập nhật: ${fmtDate(x.updatedAt)}</p>
         </div>

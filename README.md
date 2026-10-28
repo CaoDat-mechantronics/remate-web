@@ -111,3 +111,35 @@ Khi admin bấm **Đăng bài / Lưu**, mọi khách đang mở website sẽ th�
 - `public/js/admin.js`: xác thực phiên trước khi mở quản trị và xử lý đăng xuất, CRUD như trước.
 - Đăng xuất sẽ huỷ phiên trên máy chủ rồi chuyển về `/login.html`.
 - API ghi/sửa/xóa vẫn yêu cầu token hợp lệ trên backend. Các trang HTML là tài nguyên tĩnh, vì vậy chuyển hướng bằng JavaScript **không thay thế** cơ chế xác thực API ở máy chủ.
+
+
+## Trang Đối tác (bổ sung)
+
+- Trang công khai: `http://localhost:3000/doi-tac.html`. Thanh menu có tab **Đối tác**.
+- Trang chủ có section **Mạng lưới hợp tác** ngay trước mục Liên hệ.
+- Danh sách được lấy từ **`GET /api/partners`**, quản lý trong `admin.html` và lưu vào `data/partners.json`.
+- Logo tải trực tiếp từ admin sẽ lưu trong `public/uploads/`; không cần tạo file ảnh hay chỉnh sửa mã nguồn thủ công.
+- Các nhóm lĩnh vực hợp tác được cấu hình qua `SITE.partnerAreas` trong `public/js/config.js`.
+- Các mục `SITE.partners` đã khai báo thủ công từ phiên bản trước vẫn được hiển thị để tương thích; không cần khai báo thủ công cho đối tác mới.
+- Các đối tác chưa được đồng ý công khai nên để trạng thái **Ẩn** trong admin.
+
+
+## Quản lý Đối tác từ Admin — Bản cập nhật
+
+1. Mở `http://localhost:3000/login.html`, đăng nhập tài khoản quản trị.
+2. Trong `admin.html`, chọn tab **🤝 Đối tác** → **+ Bài mới**.
+3. Nhập **Tên đối tác**, **Lĩnh vực hợp tác**, **Giới thiệu ngắn**, **Website** (không bắt buộc, http/https) và tải **1 logo**.
+4. Chọn **Ưu tiên giới thiệu trên trang chủ** nếu muốn đối tác xuất hiện trước; bật **Hiển thị công khai** khi đã được phép công bố.
+5. Nhấn **Thêm đối tác**. Trang `/doi-tac.html` và mục Đối tác trên trang chủ sẽ tự cập nhật qua SSE, không cần F5.
+6. Trong danh sách bên phải có thể **Sửa / Ẩn-Hiện / Xem / Xóa**. Ảnh logo đã upload sẽ được xóa khi thay hoặc xóa đối tác.
+
+API: `GET /api/partners` công khai (chỉ bài published); `POST /api/partners`, `PUT /api/partners/:id`, `DELETE /api/partners/:id` đòi token quản trị.
+Dữ liệu lưu trong `data/partners.json` và `public/uploads/`. **Không mất dữ liệu** khi cập nhật mã nguồn nếu giữ nguyên hai đường dẫn này; hosting ổ đĩa tạm như Render Free vẫn có rủi ro mất nội dung khi khởi động lại.
+
+
+## Giao diện dịch vụ và TikTok (cập nhật)
+
+- `public/dich-vu.html`: trang **Dịch vụ cung cấp**, liên kết từ nút ở phần hero của trang chủ.
+- `public/san-pham.html` vẫn hoạt động như cũ nhưng không nằm trên thanh menu hoặc danh mục footer. Khách có thể mở trang bằng các nút **Sản phẩm kinh doanh** và **Tất cả sản phẩm** trên trang chủ (URL trực tiếp vẫn hoạt động).
+- `public/du-an.html` và quản trị dự án được giữ nguyên.
+- TikTok được thêm vào cụm nút nổi (và footer, trang Liên hệ, trang Chi tiết). **Hãy sửa `tiktok` trong `public/js/config.js` thành URL kênh TikTok chính thức của ReMate**; mặc định đang dẫn đến `https://www.tiktok.com/` vì chưa có đường dẫn cụ thể. Đặt `tiktok: ''` để ẩn nút khi chưa có kênh.

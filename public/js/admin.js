@@ -42,10 +42,22 @@
   document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => switchType(t.dataset.type)));
   function switchType(t) {
     type = t;
+    document.body.classList.toggle('partner-mode', t === 'partners');
     document.querySelectorAll('.tab').forEach((x) => x.classList.toggle('active', x.dataset.type === t));
     document.querySelectorAll('.only-p').forEach((el) => (el.style.display = t === 'products' ? '' : 'none'));
     document.querySelectorAll('.only-j').forEach((el) => (el.style.display = t === 'projects' ? '' : 'none'));
-    $('#listTitle').textContent = t === 'products' ? 'Danh sách sản phẩm' : 'Danh sách dự án';
+    document.querySelectorAll('.only-partner').forEach((el) => (el.style.display = t === 'partners' ? '' : 'none'));
+    document.querySelectorAll('.only-post').forEach((el) => (el.style.display = t !== 'partners' ? '' : 'none'));
+    $('#listTitle').textContent = t === 'products' ? 'Danh sách sản phẩm' : t === 'projects' ? 'Danh sách dự án' : 'Danh sách đối tác';
+    $('#mainTitleLabel').textContent = t === 'partners' ? 'Tên doanh nghiệp / đối tác' : 'Tên';
+    $('#categoryLabel').textContent = t === 'partners' ? 'Lĩnh vực hợp tác' : 'Danh mục / Lĩnh vực';
+    $('#summaryLabel').textContent = t === 'partners' ? 'Giới thiệu ngắn về đối tác (hiển thị công khai)' : 'Mô tả ngắn (hiển thị trên thẻ)';
+    $('#mediaTitle').textContent = t === 'partners' ? 'Logo đối tác' : 'Hình ảnh';
+    $('#mediaHint').textContent = t === 'partners' ? '(1 logo, PNG/JPG/WebP; nên dùng ảnh vuông hoặc ngang, nền trong suốt)' : '(ảnh đầu tiên là ảnh đại diện – tối đa 12 ảnh)';
+    $('#featuredLabel').textContent = t === 'partners' ? 'Ưu tiên giới thiệu trên trang chủ' : 'Nổi bật (ưu tiên trang chủ)';
+    $('#fileIn').multiple = t !== 'partners';
+    F.title.placeholder = t === 'partners' ? 'VD: Công ty TNHH ABC' : t === 'projects' ? 'VD: Lắp đặt hệ thống sản xuất' : 'VD: Máy nén khí trục vít 37kW đã qua sử dụng';
+    F.summary.placeholder = t === 'partners' ? 'Giới thiệu ngắn về năng lực và mối quan hệ hợp tác…' : '1–2 câu tóm tắt';
     resetForm(); loadList();
   }
 
@@ -66,7 +78,7 @@
         <div class="acts">
           <button class="btn btn-sm btn-light" data-act="edit">✏️ Sửa</button>
           <button class="btn btn-sm btn-light" data-act="toggle">${x.published ? '🙈 Ẩn' : '👁 Hiện'}</button>
-          <a class="btn btn-sm btn-light" target="_blank" href="chi-tiet.html?type=${type}&id=${x.slug}">↗ Xem</a>
+          <a class="btn btn-sm btn-light" target="_blank" rel="noopener" href="${type === 'partners' ? 'doi-tac.html#danh-sach-doi-tac' : `chi-tiet.html?type=${type}&id=${encodeURIComponent(x.slug)}`}">↗ Xem</a>
           <button class="btn btn-sm btn-danger" data-act="del">🗑 Xóa</button>
         </div></div>`).join('') : '<div class="empty">Chưa có bài nào.</div>';
   }
@@ -87,13 +99,13 @@
   });
 
   /* ---------- Form ---------- */
-  const FIELDS = ['title', 'category', 'summary', 'content', 'price', 'condition', 'quantity', 'origin', 'client', 'location', 'time', 'scope', 'result'];
+  const FIELDS = ['title', 'category', 'summary', 'content', 'website', 'price', 'condition', 'quantity', 'origin', 'client', 'location', 'time', 'scope', 'result'];
   function resetForm() {
     editingId = null; images = []; form.reset(); F.published.checked = true;
     $('#specs').innerHTML = ''; if (type === 'products') { addSpec(); addSpec(); }
     renderImgs(); renderList();
-    $('#formTitle').textContent = type === 'products' ? 'Đăng sản phẩm mới' : 'Đăng dự án mới';
-    $('#saveBtn').textContent = '💾 Đăng bài';
+    $('#formTitle').textContent = type === 'products' ? 'Đăng sản phẩm mới' : type === 'projects' ? 'Đăng dự án mới' : 'Thêm đối tác mới';
+    $('#saveBtn').textContent = type === 'partners' ? '💾 Thêm đối tác' : '💾 Đăng bài';
   }
   function fillForm(x) {
     resetForm(); editingId = x.id;
@@ -133,7 +145,8 @@
   }
   async function addFiles(files) {
     for (const f of [...files].filter((f) => f.type.startsWith('image/'))) {
-      if (images.length >= 12) { toast('Tối đa 12 ảnh'); break; }
+      const limit = type === 'partners' ? 1 : 12;
+      if (images.length >= limit) { toast(type === 'partners' ? 'Mỗi đối tác sử dụng 1 logo. Xóa logo cũ trước khi chọn logo mới.' : 'Tối đa 12 ảnh'); break; }
       images.push(await compress(f));
     }
     renderImgs();
@@ -166,12 +179,12 @@
   }
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (!images.length && !confirm('Bài chưa có hình ảnh. Vẫn đăng?')) return;
+    if (!images.length && !confirm(type === 'partners' ? 'Đối tác chưa có logo. Vẫn lưu? (Trang công khai sẽ hiển thị chữ cái đại diện)' : 'Bài chưa có hình ảnh. Vẫn đăng?')) return;
     const btn = $('#saveBtn'); btn.disabled = true; const old = btn.textContent; btn.textContent = '⏳ Đang lưu…';
     try {
       if (editingId) await authApi(`${type}/${editingId}`, { method: 'PUT', body: JSON.stringify(collect()) });
       else await authApi(type, { method: 'POST', body: JSON.stringify(collect()) });
-      toast(editingId ? '✅ Đã cập nhật – website hiển thị ngay' : '✅ Đã đăng bài – website hiển thị ngay');
+      toast(editingId ? '✅ Đã cập nhật – website hiển thị ngay' : type === 'partners' ? '✅ Đã lưu đối tác – website đã đồng bộ' : '✅ Đã đăng bài – website hiển thị ngay');
       resetForm(); loadList();
     } catch (err) { toast('❌ ' + err.message); if (/đăng nhập/i.test(err.message)) redirectToLogin(); }
     finally { btn.disabled = false; if (btn.textContent.startsWith('⏳')) btn.textContent = old; }
@@ -180,7 +193,10 @@
   /* ---------- Xem trước ---------- */
   $('#previewBtn').addEventListener('click', () => {
     const d = collect(); d.createdAt = new Date().toISOString(); d.title = d.title || '(Chưa có tên)';
-    $('#pvCard').innerHTML = cardHTML(type, d).replace('reveal', 'reveal in');
+    $('#pvCard').innerHTML = type === 'partners'
+      ? `<article class="partner-profile"><div class="partner-profile-logo">${d.images[0] ? `<img src="${esc(d.images[0])}" alt="">` : `<span class="partner-letter">${esc(d.title.slice(0,1).toUpperCase())}</span>`}</div>
+          <div class="partner-profile-info"><span class="partner-profile-sector">${esc(d.category || 'Đối tác')}</span><h3>${esc(d.title)}</h3><p>${esc(d.summary)}</p>${/^https?:\/\//i.test(d.website || '') ? `<span class="partner-preview-url">Website đối tác ↗</span>` : ''}</div></article>`
+      : cardHTML(type, d).replace('reveal', 'reveal in');
     $('#preview').classList.add('open');
   });
   $('#closePv').addEventListener('click', () => $('#preview').classList.remove('open'));

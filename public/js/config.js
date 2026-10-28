@@ -17,18 +17,33 @@ window.SITE = {
   bankName: 'Agribank',
 
   // ⚠️ THAY bằng link fanpage Facebook thật của công ty
-  facebook: 'https://www.facebook.com/',
+  facebook: 'https://www.facebook.com/share/1GyrXUiFRZ/?mibextid=wwXIfr',
   zalo: 'https://zalo.me/0326752517',
+  // TODO: chưa có link tài khoản TikTok chính thức; thay địa chỉ này bằng URL kênh ReMate.
+  // Để chuỗi rỗng '' nếu muốn tạm ẩn nút TikTok.
+  tiktok: 'https://www.tiktok.com/@dattotbung?_r=1&_t=ZS-9Aw6fqmqA7w',
   // Google Maps nhúng (tìm theo địa chỉ)
   mapEmbed: 'https://www.google.com/maps?q=X%C3%A3%20%C4%90%E1%BB%93ng%20H%E1%BB%B7%2C%20Th%C3%A1i%20Nguy%C3%AAn&output=embed',
 
-  // 4 lĩnh vực hoạt động (theo ấn phẩm giới thiệu)
+  // 4 lĩnh vực hoạt động chính của ReMate (hiển thị ở trang chủ và footer).
   services: [
     { icon: 'recycle', title: 'Mua bán vật tư, máy móc đã qua sử dụng' },
-    { icon: 'leaf', title: 'Kiểm tra, bảo trì thiết bị tại nhà máy' },
+    { icon: 'wrench', title: 'Kiểm tra, bảo trì thiết bị tại nhà máy' },
     { icon: 'gear', title: 'Thiết kế, gia công, chế tạo máy theo yêu cầu' },
-    { icon: 'chart', title: 'Đo đạc, tư vấn, triển khai các giải pháp tiết kiệm năng lượng' }
+    { icon: 'leaf', title: 'Đo đạc, tư vấn, triển khai các giải pháp tiết kiệm năng lượng' }
   ],
+  // Danh sách đối tác hiện được quản lý trực tiếp từ trang admin (data/partners.json).
+  // Nếu trước đây đã thêm đối tác thủ công, vẫn có thể giữ ở mảng sau (tương thích phiên bản cũ).
+  partners: [],
+
+  // Lĩnh vực hợp tác: đồng bộ tên và thứ tự với 4 lĩnh vực hoạt động trên trang chủ.
+  partnerAreas: [
+    { icon: 'recycle', title: 'Mua bán vật tư, máy móc đã qua sử dụng', description: 'Kết nối các đơn vị có nhu cầu mua bán, cung ứng hoặc tái sử dụng vật tư, máy móc công nghiệp.' },
+    { icon: 'wrench', title: 'Kiểm tra, bảo trì thiết bị tại nhà máy', description: 'Phối hợp khảo sát, kiểm tra tình trạng thiết bị và triển khai công việc bảo trì tại nhà máy.' },
+    { icon: 'gear', title: 'Thiết kế, gia công, chế tạo máy theo yêu cầu', description: 'Kết nối năng lực thiết kế kỹ thuật, gia công cơ khí và chế tạo máy đáp ứng nhu cầu thực tế.' },
+    { icon: 'leaf', title: 'Đo đạc, tư vấn, triển khai các giải pháp tiết kiệm năng lượng', description: 'Phối hợp đo đạc, đánh giá hiện trạng và đề xuất các giải pháp sử dụng năng lượng hiệu quả.' }
+  ],
+
   // 3 thế mạnh (theo ấn phẩm giới thiệu)
   highlights: [
     { icon: 'gear', img: '/img/p1.jpg', title: 'Kiểm tra – Bảo trì thiết bị', desc: 'Đảm bảo vận hành an toàn, ổn định' },
@@ -51,6 +66,7 @@ window.ICONS = {
   bank: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 2 7v2h20V7L12 2ZM4 11v7h3v-7H4Zm6.5 0v7h3v-7h-3ZM17 11v7h3v-7h-3ZM2 20v2h20v-2H2Z"/></svg>',
   facebook: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 13.5h2.5l1-4H14v-2c0-1 0-2 2-2h1.5V2.1A28 28 0 0 0 14.6 2C11.9 2 10 3.7 10 6.7v2.8H7v4h3V22h4v-8.5Z"/></svg>',
   zalo: '<svg viewBox="0 0 48 48"><text x="24" y="29" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="14" fill="#fff">Zalo</text></svg>',
+  tiktok: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.7 2h-3.8v12.9a3.3 3.3 0 1 1-3.3-3.3c.3 0 .6 0 .9.1V7.8a7.2 7.2 0 0 0-.9-.1A7.2 7.2 0 1 0 16.8 15V8.3c1.4 1 3.1 1.6 4.9 1.7V6.2c-2.8-.2-4.6-1.8-5-4.2Z"/></svg>',
   arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
   live: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>'
 };

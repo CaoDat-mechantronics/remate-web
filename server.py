@@ -5,7 +5,7 @@ Admin:  http://localhost:3000/admin.html  (ADMIN_USER / ADMIN_PASSWORD qua biế
 
 Chức năng:
   - Phục vụ file tĩnh trong ./public
-  - REST API cho sản phẩm (products) và dự án (projects), lưu vào ./data/*.json
+  - REST API cho sản phẩm (products), dự án (projects) và đối tác (partners), lưu vào ./data/*.json
   - Upload ảnh (dataURL base64) → lưu vào ./public/uploads
   - Cập nhật thời gian thực bằng Server-Sent Events (SSE): GET /api/stream
 """
@@ -34,7 +34,7 @@ ROOT = Path(__file__).resolve().parent
 PUBLIC_DIR = ROOT / "public"
 DATA_DIR = Path(os.environ.get("DATA_DIR", ROOT / "data")).resolve()
 UPLOAD_DIR = Path(os.environ.get("UPLOAD_DIR", PUBLIC_DIR / "uploads")).resolve()
-TYPES = ("products", "projects")
+TYPES = ("products", "projects", "partners")
 MAX_BODY = 25 * 1024 * 1024  # 25MB / request
 MAX_IMAGES = 12
 SESSION_SECONDS = 8 * 60 * 60
@@ -173,12 +173,23 @@ def normalize(kind, b, old=None):
     if not isinstance(b, dict):
         raise ApiError("Dữ liệu không hợp lệ")
     item = dict(old or {})
+    # Kiểm tra liên kết và dữ liệu bắt buộc TRƯỚC khi ghi file ảnh.
+    if kind == "partners":
+        website = text(b.get("website"), 500)
+        if website:
+            parsed = urlparse(website)
+            if parsed.scheme not in ("http", "https") or not parsed.netloc:
+                raise ApiError("Website đối tác phải bắt đầu bằng http:// hoặc https://")
+        if not text(b.get("title"), 200):
+            raise ApiError("Tên không được để trống")
+        if not text(b.get("summary"), 500):
+            raise ApiError("Vui lòng nhập mô tả ngắn về đối tác")
     item.update({
         "title": text(b.get("title"), 200),
         "category": text(b.get("category"), 100),
         "summary": text(b.get("summary"), 500),
         "content": text(b.get("content"), 20000),
-        "images": save_images(b.get("images")),
+        "images": save_images((b.get("images") or [])[:1] if kind == "partners" and isinstance(b.get("images"), list) else b.get("images")),
         "featured": bool(b.get("featured")),
         "published": b.get("published") is not False,
     })
@@ -194,6 +205,9 @@ def normalize(kind, b, old=None):
             "specs": [{"key": text(s.get("key"), 100), "value": text(s.get("value"), 300)}
                       for s in specs if isinstance(s, dict) and text(s.get("key"))][:30],
         })
+    elif kind == "partners":
+        # Thông tin đối tác hiển thị công khai, logo là ảnh đầu tiên.
+        item["website"] = website
     else:
         item.update({
             "client": text(b.get("client"), 200),
