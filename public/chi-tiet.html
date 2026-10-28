@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chi tiết – ReMate</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+<section class="page-title"><div class="container"><h1 id="pt">Đang tải…</h1><div class="crumb" id="crumb"></div></div></section>
+<section class="section"><div class="container" id="detail"><div class="skeleton"></div></div></section>
+<section class="section alt" id="relatedSec" style="display:none"><div class="container">
+  <div class="sec-head"><h2 id="relTitle">Có thể bạn quan tâm</h2></div><div class="grid" id="related"></div>
+</div></section>
+<div id="site-footer"></div>
+<script src="js/config.js"></script>
+<script>
+  const P = new URLSearchParams(location.search);
+  document.body.dataset.page = P.get('type') === 'projects' ? 'projects' : 'products';
+</script>
+<script src="js/common.js"></script>
+<script>
+(async function () {
+  const type = P.get('type') === 'projects' ? 'projects' : 'products', id = P.get('id');
+  const isP = type === 'products', label = isP ? 'Sản phẩm' : 'Dự án', listPage = isP ? 'san-pham.html' : 'du-an.html';
+  const box = document.getElementById('detail');
+  async function load() {
+    let x;
+    try { x = await api(`${type}/${encodeURIComponent(id)}`); }
+    catch { document.getElementById('pt').textContent = 'Không tìm thấy'; box.innerHTML = `<div class="empty">Bài viết không tồn tại hoặc đã bị gỡ. <a class="btn btn-primary btn-sm" href="${listPage}">Quay lại</a></div>`; return; }
+    document.title = `${x.title} – ReMate`;
+    document.getElementById('pt').textContent = label;
+    document.getElementById('crumb').innerHTML = `<a href="index.html">Trang chủ</a> / <a href="${listPage}">${label}</a> / ${esc(x.title)}`;
+    const imgs = x.images && x.images.length ? x.images : ['img/logo-icon.png'];
+    const rows = isP
+      ? [['Danh mục', x.category], ['Tình trạng', x.condition], ['Số lượng', x.quantity], ['Xuất xứ / Nguồn', x.origin], ...(x.specs || []).map((s) => [s.key, s.value])]
+      : [['Lĩnh vực', x.category], ['Khách hàng', x.client], ['Địa điểm', x.location], ['Thời gian', x.time], ['Phạm vi công việc', x.scope], ['Kết quả', x.result]];
+    box.innerHTML = `
+      <div class="detail">
+        <div class="gallery"><div class="main"><img id="mainImg" src="${esc(imgs[0])}" alt="${esc(x.title)}"></div>
+          ${imgs.length > 1 ? `<div class="thumbs">${imgs.map((s, i) => `<img src="${esc(s)}" class="${i ? '' : 'active'}" alt="">`).join('')}</div>` : ''}</div>
+        <div class="info">
+          <span class="eyebrow">${esc(x.category || label)}</span>
+          <h1>${esc(x.title)}</h1>
+          ${isP ? `<div style="font-size:24px;font-weight:800;color:var(--g700);margin-top:8px">${esc(x.price || 'Liên hệ')}</div>` : ''}
+          <p class="summary">${esc(x.summary)}</p>
+          <table class="kv">${rows.filter((r) => r[1]).map((r) => `<tr><th>${esc(r[0])}</th><td>${esc(r[1])}</td></tr>`).join('')}</table>
+          <div class="cta-box">
+            <a class="btn btn-primary" href="tel:${SITE.phoneRaw}">${ic('phone')} Gọi ${SITE.phone}</a>
+            <a class="btn" style="background:#0068ff;color:#fff" href="${SITE.zalo}" target="_blank" rel="noopener">Nhắn Zalo</a>
+            <a class="btn btn-outline" href="${SITE.facebook}" target="_blank" rel="noopener">${ic('facebook')} Facebook</a>
+          </div>
+          <p style="color:var(--muted);font-size:13px;margin-top:14px">Cập nhật: ${fmtDate(x.updatedAt)}</p>
+        </div>
+      </div>
+      ${x.content ? `<div class="content"><h2>${isP ? 'Mô tả chi tiết' : 'Nội dung dự án'}</h2>${esc(x.content)}</div>` : ''}`;
+    const main = document.getElementById('mainImg');
+    main.parentElement.addEventListener('click', () => lightbox(main.src));
+    box.querySelectorAll('.thumbs img').forEach((t) => t.addEventListener('click', () => {
+      main.src = t.src; box.querySelectorAll('.thumbs img').forEach((o) => o.classList.toggle('active', o === t));
+    }));
+    const all = await api(type).catch(() => []);
+    const rel = all.filter((o) => o.id !== x.id).sort((a, b) => (b.category === x.category) - (a.category === x.category)).slice(0, 3);
+    document.getElementById('relTitle').textContent = isP ? 'Sản phẩm khác' : 'Dự án khác';
+    document.getElementById('relatedSec').style.display = rel.length ? '' : 'none';
+    document.getElementById('related').innerHTML = rel.map((o) => cardHTML(type, o)).join('');
+    reveal();
+  }
+  load();
+  onLiveChange((d) => { if (d.type === type) load(); });
+})();
+</script>
+</body>
+</html>

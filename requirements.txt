@@ -1,0 +1,2 @@
+# Không cần cài thêm gì – server.py chỉ dùng thư viện chuẩn của Python 3.8+
+# (Pillow chỉ cần khi chạy tools/make_images.py để tạo ảnh từ ấn phẩm)

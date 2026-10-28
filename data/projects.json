@@ -1,0 +1,24 @@
+[
+  {
+    "id": "c3d4e5f6a1b2", "slug": "kiem-tra-bao-tri-thiet-bi-c3d4",
+    "title": "Kiểm tra – bảo trì thiết bị tại nhà máy",
+    "category": "Bảo trì thiết bị", "client": "(Cập nhật tên khách hàng)", "location": "(Cập nhật địa điểm)", "time": "2026",
+    "summary": "[BÀI MẪU – admin có thể sửa/xóa] Kiểm tra, bảo trì thiết bị, đảm bảo vận hành an toàn, ổn định.",
+    "scope": "Kiểm tra hệ thống, đo đạc thông số, bảo trì định kỳ.",
+    "result": "(Cập nhật kết quả thực tế của dự án)",
+    "content": "Đây là bài đăng dự án mẫu để minh họa bố cục.",
+    "images": ["/img/p1.jpg"], "featured": true, "published": true,
+    "createdAt": "2026-10-28T06:00:00.000Z", "updatedAt": "2026-10-28T06:00:00.000Z"
+  },
+  {
+    "id": "d4e5f6a1b2c3", "slug": "gia-cong-che-tao-ket-cau-d4e5",
+    "title": "Gia công – chế tạo kết cấu thép",
+    "category": "Gia công – chế tạo", "client": "(Cập nhật tên khách hàng)", "location": "Thái Nguyên", "time": "2026",
+    "summary": "[BÀI MẪU – admin có thể sửa/xóa] Gia công chế tạo kết cấu linh hoạt theo yêu cầu khách hàng.",
+    "scope": "Thiết kế, gia công, lắp dựng kết cấu.",
+    "result": "(Cập nhật kết quả thực tế của dự án)",
+    "content": "Đây là bài đăng dự án mẫu để minh họa bố cục.",
+    "images": ["/img/p2.jpg"], "featured": true, "published": true,
+    "createdAt": "2026-10-28T05:00:00.000Z", "updatedAt": "2026-10-28T05:00:00.000Z"
+  }
+]

@@ -1,0 +1,85 @@
+/* ===== Trang quản trị ===== */
+body.admin{background:#eef2ea}
+body.admin .footer,body.admin .float{display:none}
+.login-wrap{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,var(--g900),var(--g600))}
+.login-card{background:#fff;border-radius:18px;padding:34px 30px;width:100%;max-width:400px;box-shadow:var(--shadow-lg);display:grid;gap:14px}
+.login-card img{width:200px;margin:0 auto}
+.login-card h2{text-align:center;color:var(--g800)}
+.login-card .back{text-align:center;color:var(--muted);font-size:14px}
+.err{color:#b3261e;text-align:center;min-height:1.2em;font-size:14px}
+
+label{display:grid;gap:5px;font-weight:600;font-size:14px;color:var(--g800)}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;font-weight:400;color:var(--text)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--g500);border-color:transparent}
+textarea{resize:vertical}
+.req{color:#b3261e}
+
+.a-head{background:var(--g800);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:12px 24px;position:sticky;top:0;z-index:20;gap:12px;flex-wrap:wrap}
+.a-head .brand img{height:42px;filter:brightness(0) invert(1)}
+.a-head .brand b{color:#fff}.a-head .brand small{color:#c6d8c0}
+.a-actions{display:flex;gap:8px}
+.a-head .btn-outline{border-color:#fff;color:#fff}
+.a-wrap{max-width:1400px;margin:0 auto;padding:22px}
+.tabs{display:flex;gap:8px;margin-bottom:18px}
+.tab{padding:11px 22px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:700;cursor:pointer;color:var(--g800)}
+.tab.active{background:var(--g700);color:#fff;border-color:var(--g700)}
+.a-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:20px;align-items:start}
+.panel{background:#fff;border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
+.panel-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.panel-h h3{color:var(--g800)}
+.panel-h input{max-width:200px}
+fieldset{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;display:grid;gap:12px}
+legend{padding:0 8px;font-weight:800;color:var(--g700)}
+legend small{font-weight:400;color:var(--muted)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.specs-h{display:flex;justify-content:space-between;align-items:center}
+.spec{display:grid;grid-template-columns:1fr 1.4fr 38px;gap:8px}
+.spec button{border:0;background:#fde8e7;color:#b3261e;border-radius:8px;cursor:pointer}
+.drop{border:2px dashed var(--g500);border-radius:12px;padding:24px;text-align:center;cursor:pointer;background:var(--g100);font-weight:500;transition:.2s}
+.drop.over{background:var(--g200)}
+.imgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.imgs .it{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:4/3;border:2px solid transparent}
+.imgs .it:first-child{border-color:var(--g700)}
+.imgs .it:first-child::after{content:"Ảnh đại diện";position:absolute;left:0;right:0;bottom:0;background:var(--g700);color:#fff;font-size:11px;text-align:center;padding:2px}
+.imgs img{width:100%;height:100%;object-fit:cover}
+.imgs .ctl{position:absolute;top:4px;right:4px;display:flex;gap:4px}
+.imgs .ctl button{width:26px;height:26px;border:0;border-radius:6px;background:rgba(255,255,255,.92);cursor:pointer;font-size:13px}
+.flags{grid-template-columns:1fr 1fr}
+.chk{display:flex;align-items:center;gap:8px;font-weight:500}
+.chk input{width:18px;height:18px}
+.form-actions{display:flex;gap:10px;flex-wrap:wrap}
+.form-actions .btn{flex:1}
+.post-list{display:grid;gap:10px;max-height:calc(100vh - 220px);overflow:auto}
+.post{display:grid;grid-template-columns:72px 1fr;gap:12px;padding:10px;border:1px solid var(--line);border-radius:12px;align-items:center}
+.post.editing{border-color:var(--g600);background:var(--g100)}
+.post img{width:72px;height:56px;object-fit:cover;border-radius:8px}
+.post b{display:block;color:var(--g800);font-size:15px;line-height:1.3}
+.post small{color:var(--muted)}
+.post .acts{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}
+.pill{font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700;margin-left:4px}
+.pill.hide{background:#eee;color:#666}.pill.star{background:#fff3c4;color:#7a5b00}
+.modal{position:fixed;inset:0;background:rgba(10,25,15,.7);display:none;place-items:center;z-index:100;padding:20px}
+.modal.open{display:grid}
+.modal-box{background:var(--bg);padding:26px;border-radius:16px;position:relative}
+.modal .x{position:absolute;right:10px;top:10px;border:0;background:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer}
+@media (max-width:1000px){.a-grid{grid-template-columns:1fr}.post-list{max-height:none}}
+@media (max-width:600px){.row2,.row3,.flags{grid-template-columns:1fr}.a-wrap{padding:12px}.panel{padding:14px}}
+
+/* ===== Trang đăng nhập riêng: hiện / ẩn mật khẩu ===== */
+.login-page .login-card{gap:10px}
+.login-page .login-card h1{text-align:center;color:var(--g800);font-size:25px;line-height:1.3}
+.login-subtitle{text-align:center;color:var(--muted);font-size:13px;margin-bottom:12px}
+.login-page .login-card label{margin-top:7px}
+.login-page .login-card #loginBtn{width:100%;margin-top:10px}
+.password-field{position:relative;display:flex;align-items:center}
+.password-field input{padding-right:58px;min-height:48px}
+.password-toggle{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:44px;height:44px;display:grid;place-items:center;cursor:pointer;border:0;background:transparent;color:var(--g800);border-radius:8px}
+.password-toggle:hover{background:var(--g100)}
+.password-toggle:focus-visible{outline:2px solid var(--g600);outline-offset:1px}
+.password-toggle svg{height:22px;width:22px}
+.password-toggle svg[hidden]{display:none}
+.auth-gate{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;color:var(--g800);font-weight:600;text-align:center}
+.auth-gate[hidden]{display:none}
+.auth-spinner{width:32px;height:32px;border-radius:50%;border:3px solid var(--g200);border-top-color:var(--g700);animation:remate-spin .8s linear infinite}
+@keyframes remate-spin{to{transform:rotate(360deg)}}

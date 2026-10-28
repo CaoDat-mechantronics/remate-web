@@ -1,0 +1,90 @@
+[
+  {
+    "id": "a1b2c3d4e5f6",
+    "slug": "thep-hop-da-qua-su-dung-a1b2",
+    "title": "Thép hộp, thép ống công nghiệp đã qua sử dụng",
+    "category": "Vật tư công nghiệp",
+    "condition": "Đã qua sử dụng – đã phân loại",
+    "price": "Liên hệ",
+    "quantity": "Theo lô",
+    "origin": "Thu hồi từ nhà máy",
+    "summary": "[BÀI MẪU – admin có thể sửa/xóa] Thép hộp, thép ống, thép hình đã qua sử dụng, được phân loại theo kích thước, phù hợp làm kết cấu, khung giá, nhà xưởng.",
+    "content": "Đây là bài đăng mẫu để minh họa bố cục trang sản phẩm.\n\nAdmin vào trang Quản trị để cập nhật thông số, hình ảnh và giá thực tế.",
+    "specs": [
+      {
+        "key": "Chủng loại",
+        "value": "Thép hộp, thép ống, thép hình"
+      },
+      {
+        "key": "Kích thước",
+        "value": "Nhiều kích thước – liên hệ"
+      }
+    ],
+    "images": [
+      "/img/p3.jpg"
+    ],
+    "featured": true,
+    "published": true,
+    "createdAt": "2026-10-28T06:00:00.000Z",
+    "updatedAt": "2026-10-28T06:00:00.000Z"
+  },
+  {
+    "id": "b2c3d4e5f6a1",
+    "slug": "khung-ket-cau-gia-cong-b2c3",
+    "title": "Khung kết cấu thép gia công theo yêu cầu",
+    "category": "Gia công – chế tạo",
+    "condition": "Mới gia công",
+    "price": "Liên hệ",
+    "quantity": "Theo đơn hàng",
+    "origin": "Xưởng ReMate",
+    "summary": "[BÀI MẪU – admin có thể sửa/xóa] Gia công, chế tạo kết cấu linh hoạt theo yêu cầu khách hàng.",
+    "content": "Đây là bài đăng mẫu để minh họa bố cục trang sản phẩm.",
+    "specs": [
+      {
+        "key": "Vật liệu",
+        "value": "Thép (theo yêu cầu)"
+      }
+    ],
+    "images": [
+      "/img/p2.jpg"
+    ],
+    "featured": true,
+    "published": true,
+    "createdAt": "2026-10-28T05:00:00.000Z",
+    "updatedAt": "2026-10-28T05:00:00.000Z"
+  },
+  {
+    "title": "Máy nén khí",
+    "category": "Vật tư công nghiệp",
+    "summary": "Máy nén khi công suất cao",
+    "content": "",
+    "images": [
+      "/uploads/1793201750554-8bb476e3.jpg",
+      "/uploads/1793201750558-ecb30ec3.jpg"
+    ],
+    "featured": false,
+    "published": true,
+    "condition": "Mới 100%",
+    "price": "450000",
+    "quantity": "1",
+    "origin": "Trung Quốc",
+    "specs": [
+      {
+        "key": "Công suất",
+        "value": "1000W"
+      },
+      {
+        "key": "Trọng lượng",
+        "value": "100kg"
+      },
+      {
+        "key": "Pin",
+        "value": "3700mAh"
+      }
+    ],
+    "id": "6a1d23f73658",
+    "slug": "may-nen-khi-6a1d",
+    "createdAt": "2026-10-28T15:35:50.565Z",
+    "updatedAt": "2026-10-28T15:35:50.565Z"
+  }
+]

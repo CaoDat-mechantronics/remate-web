@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Quản trị nội dung – ReMate</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin">
+
+<!-- Kiểm tra phiên trước khi hiện trang quản trị -->
+<div id="authGate" class="auth-gate" role="status" aria-live="polite">
+  <span class="auth-spinner" aria-hidden="true"></span>
+  <span>Đang xác thực tài khoản quản trị…</span>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div id="appView" hidden>
+  <header class="a-head">
+    <a class="brand" href="index.html" target="_blank"><img src="img/logo-icon.png" alt=""><span><b>ReMate</b><small>QUẢN TRỊ NỘI DUNG</small></span></a>
+    <div class="a-actions"><a class="btn btn-light btn-sm" href="index.html" target="_blank">Xem website ↗</a><button class="btn btn-outline btn-sm" id="logout">Đăng xuất</button></div>
+  </header>
+
+  <div class="a-wrap">
+    <div class="tabs">
+      <button class="tab active" data-type="products">📦 Sản phẩm</button>
+      <button class="tab" data-type="projects">🏗️ Dự án</button>
+    </div>
+
+    <div class="a-grid">
+      <!-- FORM ĐĂNG BÀI THEO MẪU -->
+      <form class="panel" id="postForm" autocomplete="off">
+        <div class="panel-h"><h3 id="formTitle">Đăng sản phẩm mới</h3><button type="button" class="btn btn-sm btn-light" id="resetBtn">+ Bài mới</button></div>
+
+        <fieldset><legend>1. Thông tin chính</legend>
+          <label>Tên <span class="req">*</span><input name="title" required maxlength="200" placeholder="VD: Máy nén khí trục vít 37kW đã qua sử dụng"></label>
+          <div class="row2">
+            <label>Danh mục / Lĩnh vực<input name="category" list="catList" placeholder="Chọn hoặc nhập mới"></label>
+            <label class="only-p">Giá<input name="price" placeholder="VD: 45.000.000 đ hoặc Liên hệ"></label>
+            <label class="only-j">Thời gian thực hiện<input name="time" placeholder="VD: 03/2026 – 05/2026"></label>
+          </div>
+          <datalist id="catList"></datalist>
+          <label>Mô tả ngắn (hiển thị trên thẻ) <span class="req">*</span><textarea name="summary" rows="2" maxlength="500" required placeholder="1–2 câu tóm tắt"></textarea></label>
+        </fieldset>
+
+        <fieldset class="only-p"><legend>2. Thông số sản phẩm</legend>
+          <div class="row3">
+            <label>Tình trạng<input name="condition" list="condList" placeholder="VD: Đã qua sử dụng 85%"></label>
+            <label>Số lượng<input name="quantity" placeholder="VD: 02 bộ"></label>
+            <label>Xuất xứ / Nguồn<input name="origin" placeholder="VD: Nhật Bản"></label>
+          </div>
+          <datalist id="condList"><option>Mới 100%</option><option>Đã qua sử dụng – còn tốt</option><option>Đã qua sử dụng – đã bảo dưỡng</option><option>Thanh lý theo lô</option></datalist>
+          <div class="specs-h"><b>Thông số kỹ thuật</b><button type="button" class="btn btn-sm btn-light" id="addSpec">+ Thêm dòng</button></div>
+          <div id="specs"></div>
+        </fieldset>
+
+        <fieldset class="only-j"><legend>2. Thông tin dự án</legend>
+          <div class="row2">
+            <label>Khách hàng / Chủ đầu tư<input name="client" placeholder="VD: Công ty TNHH ABC"></label>
+            <label>Địa điểm<input name="location" placeholder="VD: KCN Yên Bình, Thái Nguyên"></label>
+          </div>
+          <label>Phạm vi công việc<textarea name="scope" rows="2" placeholder="Các hạng mục ReMate đảm nhận"></textarea></label>
+          <label>Kết quả đạt được<textarea name="result" rows="2" placeholder="VD: Giảm 18% điện năng tiêu thụ…"></textarea></label>
+        </fieldset>
+
+        <fieldset><legend>3. Hình ảnh <small>(ảnh đầu tiên là ảnh đại diện – tối đa 12 ảnh)</small></legend>
+          <label class="drop" id="drop"><input type="file" id="fileIn" accept="image/*" multiple hidden>
+            <span>📷 Kéo thả ảnh vào đây hoặc <u>bấm để chọn</u><br><small>Ảnh tự động nén ≤ 1600px</small></span></label>
+          <div class="imgs" id="imgs"></div>
+        </fieldset>
+
+        <fieldset><legend>4. Nội dung chi tiết</legend>
+          <textarea name="content" rows="7" placeholder="Mô tả chi tiết, ưu điểm, điều kiện bảo hành, quy trình thực hiện…"></textarea>
+        </fieldset>
+
+        <fieldset class="flags">
+          <label class="chk"><input type="checkbox" name="featured"> Nổi bật (ưu tiên trang chủ)</label>
+          <label class="chk"><input type="checkbox" name="published" checked> Hiển thị công khai</label>
+        </fieldset>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" id="saveBtn">💾 Đăng bài</button>
+          <button type="button" class="btn btn-outline" id="previewBtn">👁 Xem trước</button>
+        </div>
+      </form>
+
+      <!-- DANH SÁCH BÀI -->
+      <div class="panel">
+        <div class="panel-h"><h3 id="listTitle">Danh sách</h3><input id="filter" type="search" placeholder="Tìm…"></div>
+        <div id="postList" class="post-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="preview"><div class="modal-box"><button class="x" type="button" id="closePv">✕</button><p class="eyebrow">Xem trước thẻ hiển thị</p><div id="pvCard" style="max-width:340px"></div></div></div>
+</div>
+
+<div id="site-header" hidden></div><div id="site-footer"></div>
+<script src="js/config.js"></script>
+<script src="js/common.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

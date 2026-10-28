@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Đăng nhập quản trị – ReMate</title>
+<meta name="description" content="Đăng nhập trang quản trị nội dung ReMate.">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin login-page">
+<main class="login-wrap">
+  <form class="login-card" id="loginForm" autocomplete="on">
+    <img src="img/logo-full.png" alt="ReMate">
+    <h1>Đăng nhập quản trị</h1>
+    <p class="login-subtitle">Đăng nhập để quản lý sản phẩm và dự án của ReMate.</p>
+    <label for="username">Tên đăng nhập</label>
+    <input id="username" name="username" required autocomplete="username" value="admin" spellcheck="false">
+    <label for="password">Mật khẩu</label>
+    <div class="password-field">
+      <input id="password" name="password" type="password" required autocomplete="current-password" placeholder="Nhập mật khẩu" spellcheck="false">
+      <button id="togglePassword" class="password-toggle" type="button" aria-label="Hiện mật khẩu" aria-pressed="false" title="Hiện mật khẩu">
+        <svg class="eye-open" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+        <svg class="eye-closed" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" hidden>
+          <path d="M3 3 21 21M10.5 5.1A11.7 11.7 0 0 1 12 5c6.4 0 10 7 10 7a16 16 0 0 1-3.2 3.8M6 6.3C3.5 8 2 12 2 12s3.6 7 10 7a11.6 11.6 0 0 0 5.2-1.2"/>
+          <path d="M10 10a3 3 0 0 0 4 4"/>
+        </svg>
+      </button>
+    </div>
+    <button id="loginBtn" class="btn btn-primary" type="submit">Đăng nhập</button>
+    <p class="err" id="loginErr" role="alert" aria-live="polite"></p>
+    <a href="index.html" class="back">← Về trang chủ</a>
+  </form>
+</main>
+<script src="js/login.js"></script>
+</body>
+</html>

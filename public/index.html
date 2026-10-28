@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ReMate – Công ty Cổ phần Vật tư Tái sử dụng | Giải pháp bền vững cho sản xuất hiện đại</title>
+<meta name="description" content="ReMate cung cấp vật tư, máy móc đã qua sử dụng và triển khai giải pháp kỹ thuật giúp doanh nghiệp tối ưu chi phí, tiết kiệm năng lượng, nâng cao hiệu suất sản xuất.">
+<meta property="og:title" content="ReMate – Chi phí tối ưu, Giá trị tối đa"><meta property="og:image" content="img/flyer.jpg">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="home">
+<div id="site-header"></div>
+
+<!-- ===== HERO: bố cục theo ấn phẩm giới thiệu ===== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-logo reveal">
+        <img src="img/logo-full.png" alt="ReMate">
+        <h2 id="fullName"></h2>
+        <div class="slogan" id="slogan"></div>
+      </div>
+      <div class="hero-text reveal">
+        <h1 id="headline"></h1>
+        <p id="intro"></p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="san-pham.html">Xem sản phẩm</a>
+          <a class="btn btn-outline" href="du-an.html">Dự án đã thực hiện</a>
+        </div>
+      </div>
+    </div>
+    <div class="services reveal" id="services"></div>
+    <div class="strengths" id="strengths"></div>
+  </div>
+  <div class="tagline-bar"><div class="container">
+    <p><span class="ic" id="leafIc"></span><span id="tagline"></span></p>
+    <a class="btn btn-light" href="#lien-he">Liên hệ tư vấn</a>
+  </div></div>
+</section>
+
+<!-- ===== GIỚI THIỆU ===== -->
+<section class="section alt" id="gioi-thieu">
+  <div class="container about">
+    <div class="about-img reveal">
+      <img src="img/flyer.jpg" alt="Ấn phẩm giới thiệu ReMate" style="cursor:zoom-in" onclick="lightbox(this.src)">
+      <div class="badge">Chi phí tối ưu – Giá trị tối đa</div>
+    </div>
+    <div class="reveal">
+      <span class="eyebrow">Về chúng tôi</span>
+      <div class="sec-head" style="margin-bottom:10px"><h2 id="aboutTitle"></h2></div>
+      <p id="aboutIntro" style="color:#3a4a40"></p>
+      <ul id="aboutList"></ul>
+      <a class="btn btn-primary" href="#lien-he">Liên hệ hợp tác</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SẢN PHẨM MỚI ===== -->
+<section class="section">
+  <div class="container">
+    <div class="sec-head">
+      <div><span class="eyebrow">Sản phẩm</span><h2>Sản phẩm nổi bật</h2><p>Vật tư, máy móc đã qua sử dụng – đa dạng chủng loại, chất lượng đảm bảo.</p></div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span id="live1"></span><a class="btn btn-outline btn-sm" href="san-pham.html">Tất cả sản phẩm →</a></div>
+    </div>
+    <div class="grid" id="homeProducts"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+  </div>
+</section>
+
+<!-- ===== DỰ ÁN ===== -->
+<section class="section alt">
+  <div class="container">
+    <div class="sec-head">
+      <div><span class="eyebrow">Dự án</span><h2>Dự án đã thực hiện</h2><p>Các công trình, dự án ReMate đã đồng hành cùng doanh nghiệp.</p></div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span id="live2"></span><a class="btn btn-outline btn-sm" href="du-an.html">Tất cả dự án →</a></div>
+    </div>
+    <div class="grid" id="homeProjects"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+  </div>
+</section>
+
+<!-- ===== LIÊN HỆ ===== -->
+<section class="section" id="lien-he">
+  <div class="container">
+    <div class="sec-head"><div><span class="eyebrow">Liên hệ</span><h2>Kết nối với ReMate</h2><p>Gọi điện, nhắn Zalo hoặc ghé thăm chúng tôi để được tư vấn miễn phí.</p></div></div>
+    <div class="contact">
+      <div class="reveal">
+        <div class="contact-list" id="contactList"></div>
+        <div class="socials" id="contactSocials"></div>
+      </div>
+      <div class="map reveal"><iframe id="map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Bản đồ ReMate"></iframe></div>
+    </div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+<script src="js/config.js"></script>
+<script src="js/common.js"></script>
+<script>
+(function () {
+  const S = SITE;
+  const set = (id, v) => (document.getElementById(id).textContent = v);
+  set('fullName', S.fullName); set('slogan', S.slogan); set('headline', S.headline);
+  set('intro', S.intro); set('tagline', S.tagline);
+  document.getElementById('leafIc').innerHTML = ICONS.leaf;
+
+  document.getElementById('services').innerHTML = S.services.map((s) =>
+    `<div class="service"><div class="circle">${ic(s.icon)}</div><h3>${s.title}</h3></div>`).join('');
+  document.getElementById('strengths').innerHTML = S.highlights.map((h) =>
+    `<div class="strength reveal"><img src="${h.img}" alt="${h.title}"><div class="cap">${ic(h.icon)}<div><b>${h.title}</b><small>${h.desc}</small></div></div></div>`).join('');
+
+  set('aboutTitle', S.fullName.replace('CÔNG TY', 'Công ty').replace('CỔ PHẦN', 'Cổ phần').replace('VẬT TƯ TÁI SỬ DỤNG', 'Vật tư Tái sử dụng'));
+  set('aboutIntro', S.intro);
+  document.getElementById('aboutList').innerHTML = S.services.map((s) => `<li>${ic(s.icon)}<span>${s.title}</span></li>`).join('');
+
+  document.getElementById('contactList').innerHTML = [
+    ['phone', 'Số điện thoại', `<a href="tel:${S.phoneRaw}">${S.phone}</a>`],
+    ['mail', 'Email', `<a href="mailto:${S.email}">${S.email}</a>`],
+    ['pin', 'Địa chỉ', S.address],
+    ['bank', 'Tài khoản', `${S.bankAccount}<br>${S.bankName}`]
+  ].map(([i, l, v]) => `<div class="contact-item">${ic(i)}<div><small>${l}</small><span>${v}</span></div></div>`).join('');
+  document.getElementById('contactSocials').innerHTML =
+    `<a class="social fb" href="${S.facebook}" target="_blank" rel="noopener">${ic('facebook')} Fanpage Facebook</a>
+     <a class="social zl" href="${S.zalo}" target="_blank" rel="noopener">Chat Zalo: ${S.phone}</a>
+     <a class="social ph" href="tel:${S.phoneRaw}">${ic('phone')} Gọi ngay</a>`;
+  document.getElementById('map').src = S.mapEmbed;
+
+  document.getElementById('live1').innerHTML = liveBadge();
+  document.getElementById('live2').innerHTML = liveBadge();
+
+  async function load(type, el) {
+    const box = document.getElementById(el);
+    try {
+      const list = await api(type);
+      const pick = [...list.filter((x) => x.featured), ...list.filter((x) => !x.featured)].slice(0, 6);
+      box.innerHTML = pick.length ? pick.map((x) => cardHTML(type, x)).join('') : '<div class="empty">Đang cập nhật…</div>';
+    } catch { box.innerHTML = '<div class="empty">Không tải được dữ liệu. Vui lòng thử lại sau.</div>'; }
+    reveal();
+  }
+  load('products', 'homeProducts'); load('projects', 'homeProjects');
+  onLiveChange((d) => {
+    load(d.type, d.type === 'products' ? 'homeProducts' : 'homeProjects');
+    if (d.action === 'create') toast(d.type === 'products' ? '🆕 Có sản phẩm mới vừa được đăng!' : '🆕 Có dự án mới vừa được cập nhật!');
+  });
+})();
+</script>
+</body>
+</html>
