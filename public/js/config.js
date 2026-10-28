@@ -25,9 +25,9 @@ window.SITE = {
   // 4 lĩnh vực hoạt động (theo ấn phẩm giới thiệu)
   services: [
     { icon: 'recycle', title: 'Mua bán vật tư, máy móc đã qua sử dụng' },
-    { icon: 'leaf', title: 'Tư vấn, triển khai các giải pháp tiết kiệm năng lượng' },
-    { icon: 'gear', title: 'Thiết kế, chế tạo máy' },
-    { icon: 'chart', title: 'Tư vấn, triển khai các giải pháp tăng hiệu suất sản xuất' }
+    { icon: 'leaf', title: 'Kiểm tra, bảo trì thiết bị tại nhà máy' },
+    { icon: 'gear', title: 'Thiết kế, gia công, chế tạo máy theo yêu cầu' },
+    { icon: 'chart', title: 'Đo đạc, tư vấn, triển khai các giải pháp tiết kiệm năng lượng' }
   ],
   // 3 thế mạnh (theo ấn phẩm giới thiệu)
   highlights: [
