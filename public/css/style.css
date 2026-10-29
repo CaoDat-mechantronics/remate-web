@@ -591,3 +591,7 @@ button,input,select,textarea{font:inherit}
 }
 @media(max-width:480px){.rm-about-expertise-grid{grid-template-columns:1fr}.rm-expertise-card{min-height:170px}.rm-about-album-heading{flex-direction:column}.rm-about-hero-buttons .btn{width:100%}.rm-about-hero-line{gap:9px;letter-spacing:.7px}}
 @media(prefers-reduced-motion:reduce){.rm-album-image img{transition:none}}
+
+/* Quản trị có thể tùy chỉnh ảnh đại diện lĩnh vực; ảnh luôn hiển thị đủ. */
+.rm-expertise-icon.has-custom-image{background:#f4f8f2;overflow:hidden}
+.rm-expertise-custom-image{display:block;width:100%;height:100%;object-fit:contain;padding:4px;border-radius:9px}

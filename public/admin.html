@@ -33,6 +33,7 @@
       <button class="tab" data-type="partners">🤝 Đối tác</button>
       <button class="tab" data-type="services">🛠️ Dịch vụ</button>
       <button class="tab" data-type="album">📸 Album hoạt động</button>
+      <button class="tab" data-type="expertise-images">🖼️ Ảnh lĩnh vực</button>
     </div>
 
     <div class="a-grid">
@@ -116,6 +117,16 @@
         <div id="postList" class="post-list"></div>
       </div>
     </div>
+    <!-- Quản lý ảnh của bốn lĩnh vực tại gioi-thieu.html, độc lập với album. -->
+    <section id="expertisePanel" class="expertise-admin" hidden aria-label="Quản lý hình ảnh bốn lĩnh vực">
+      <div class="panel">
+        <div class="panel-h"><div><span class="eyebrow">Trang Giới thiệu</span><h2>Hình ảnh bốn lĩnh vực hoạt động</h2></div>
+          <a href="gioi-thieu.html" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Xem trang Giới thiệu ↗</a></div>
+        <p class="partner-admin-note">Thay riêng biểu tượng của từng ô bằng ảnh bạn chọn. Giữ nguyên tên và thứ tự lĩnh vực; nếu bấm <strong>Khôi phục mặc định</strong>, trang sẽ dùng biểu tượng SVG ban đầu. Ảnh được lưu tại <code>public/expertise/</code>, không nằm chung với Album hoạt động.</p>
+        <div id="expertiseAdminGrid" class="expertise-admin-grid" aria-live="polite"><div class="empty">Đang tải bốn lĩnh vực…</div></div>
+        <p id="expertiseStatus" class="expertise-admin-status" role="status" aria-live="polite"></p>
+      </div>
+    </section>
     <!-- Album hoạt động: tách biệt khỏi form và ảnh của bài đăng -->
     <section id="albumPanel" class="album-admin" hidden aria-label="Quản lý album hình ảnh hoạt động">
       <div class="panel album-admin-top">
@@ -151,5 +162,6 @@
 <script src="js/common.js"></script>
 <script src="js/admin.js"></script>
 <script src="js/admin-album.js"></script>
+<script src="js/admin-expertise.js"></script>
 </body>
 </html>

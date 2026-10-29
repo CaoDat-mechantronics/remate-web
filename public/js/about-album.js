@@ -2,11 +2,25 @@
 (() => {
   const S = window.SITE;
   const fields = document.getElementById('aboutExpertise');
-  fields.innerHTML = S.services.map((s, i) => `
-    <article class="rm-expertise-card reveal"><span class="rm-expertise-number">0${i + 1}</span>
-      <div class="rm-expertise-icon">${ic(s.icon)}</div><h3>${esc(s.title)}</h3>
-      <span class="rm-expertise-underline"></span></article>`).join('');
-  reveal();
+  function renderExpertise(images = []) {
+    fields.innerHTML = S.services.map((s, i) => {
+      const custom = images.find(x => x.index === i && x.src);
+      const symbol = custom
+        ? `<img class="rm-expertise-custom-image" src="${esc(custom.src)}" alt="Biểu tượng ${esc(s.title)}" loading="lazy">`
+        : ic(s.icon);
+      return `<article class="rm-expertise-card reveal"><span class="rm-expertise-number">0${i + 1}</span>
+        <div class="rm-expertise-icon ${custom ? 'has-custom-image' : ''}">${symbol}</div><h3>${esc(s.title)}</h3>
+        <span class="rm-expertise-underline"></span></article>`;
+    }).join('');
+    reveal();
+  }
+  async function loadExpertise() {
+    try { renderExpertise(await api('expertise-images')); }
+    catch { renderExpertise(); }
+  }
+  renderExpertise();
+  loadExpertise();
+  onLiveChange(d => { if (d.type === 'expertise-images') loadExpertise(); });
 
   const viewport = document.getElementById('albumViewport');
   const track = document.getElementById('albumTrack');

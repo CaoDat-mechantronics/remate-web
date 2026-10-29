@@ -35,6 +35,8 @@ PUBLIC_DIR = ROOT / "public"
 DATA_DIR = Path(os.environ.get("DATA_DIR", ROOT / "data")).resolve()
 UPLOAD_DIR = Path(os.environ.get("UPLOAD_DIR", PUBLIC_DIR / "uploads")).resolve()
 ALBUM_DIR = Path(os.environ.get("ALBUM_DIR", PUBLIC_DIR / "album")).resolve()
+EXPERTISE_DIR = Path(os.environ.get("EXPERTISE_DIR", PUBLIC_DIR / "expertise")).resolve()
+MAX_EXPERTISE_IMAGE_BYTES = 5 * 1024 * 1024  # Mỗi ô dùng một ảnh ≤ 5 MiB
 MAX_ALBUM_IMAGE_BYTES = 8 * 1024 * 1024  # 8 MiB/ảnh, không giới hạn tổng số ảnh
 TYPES = ("products", "projects", "partners", "services")
 SERVICE_GROUPS = (
@@ -49,6 +51,7 @@ SESSION_SECONDS = 8 * 60 * 60
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 ALBUM_DIR.mkdir(parents=True, exist_ok=True)
+EXPERTISE_DIR.mkdir(parents=True, exist_ok=True)
 
 MIME = {
     ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
@@ -283,6 +286,59 @@ def delete_album_image(src):
         except OSError:
             pass
 
+# ---------------- Ảnh biểu tượng 4 lĩnh vực trên trang Giới thiệu ----------------
+def store_expertise_image(dataurl):
+    """Upload ảnh riêng, xác minh chữ ký và giới hạn dung lượng mỗi file."""
+    if not isinstance(dataurl, str):
+        raise ApiError("Thiếu file ảnh")
+    m = DATAURL_RE.fullmatch(dataurl.strip())
+    if not m:
+        raise ApiError("Chỉ hỗ trợ JPG, PNG, WebP hoặc GIF")
+    ext = m.group(1).lower().replace("jpeg", "jpg")
+    encoded = m.group(2)
+    if len(encoded) > ((MAX_EXPERTISE_IMAGE_BYTES + 2) // 3 * 4 + 16):
+        raise ApiError("Ảnh tối đa 5 MB", 413)
+    try:
+        binary = base64.b64decode(encoded, validate=True)
+    except (ValueError, base64.binascii.Error):
+        raise ApiError("Dữ liệu ảnh không hợp lệ")
+    if not binary or len(binary) > MAX_EXPERTISE_IMAGE_BYTES:
+        raise ApiError("Ảnh tối đa 5 MB", 413)
+    valid = ((ext == "jpg" and binary.startswith(b"\xff\xd8\xff")) or
+             (ext == "png" and binary.startswith(b"\x89PNG\r\n\x1a\n")) or
+             (ext == "webp" and binary.startswith(b"RIFF") and binary[8:12] == b"WEBP") or
+             (ext == "gif" and binary[:6] in (b"GIF87a", b"GIF89a")))
+    if not valid:
+        raise ApiError("Loại file không khớp nội dung")
+    filename = f"{int(time.time()*1000)}-{secrets.token_hex(8)}.{ext}"
+    (EXPERTISE_DIR / filename).write_bytes(binary)
+    return "/expertise/" + filename
+
+
+def delete_expertise_image(src):
+    if not isinstance(src, str) or not src.startswith("/expertise/"):
+        return
+    name = src[len("/expertise/"):]
+    if not name or name != Path(name).name:
+        return
+    file = (EXPERTISE_DIR / name).resolve()
+    if file.parent == EXPERTISE_DIR:
+        try:
+            file.unlink(missing_ok=True)
+        except OSError:
+            pass
+
+
+def expertise_items():
+    """Giữ đúng 4 mục, theo thứ tự SITE.services; tự khôi phục nếu file trống."""
+    saved = read_all("expertise-images")
+    if not isinstance(saved, list):
+        saved = []
+    by_index = {i.get("index"): i for i in saved if isinstance(i, dict) and type(i.get("index")) is int}
+    return [{"index": n, "src": by_index.get(n, {}).get("src") or None,
+             "updatedAt": by_index.get(n, {}).get("updatedAt") or None} for n in range(4)]
+
+
 # ---------------- HTTP Handler ----------------
 class Handler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
@@ -361,6 +417,35 @@ class Handler(BaseHTTPRequestHandler):
 
     # ----- API -----
 
+    def expertise_api(self, method, parts):
+        """GET công khai; PUT upload / DELETE khôi phục biểu tượng mặc định (admin)."""
+        if method == "GET" and len(parts) == 2:
+            return self.send_json(200, expertise_items())
+        if len(parts) != 3 or parts[2] not in ("0", "1", "2", "3"):
+            raise ApiError("Vị trí lĩnh vực không hợp lệ", 404)
+        if not self.is_auth():
+            raise ApiError("Cần đăng nhập admin", 401)
+        index = int(parts[2])
+        if method not in ("PUT", "DELETE"):
+            raise ApiError("Phương thức không hỗ trợ", 405)
+        payload = self.read_body() if method == "PUT" else None
+        if method == "PUT" and (not isinstance(payload, dict) or not payload.get("image")):
+            raise ApiError("Hãy chọn ảnh trước khi lưu")
+        with _data_lock:
+            items = expertise_items()
+            old_src = items[index]["src"]
+            new_src = store_expertise_image(payload["image"]) if method == "PUT" else None
+            items[index] = {"index": index, "src": new_src, "updatedAt": now_iso()}
+            try:
+                write_all("expertise-images", items)
+            except Exception:
+                delete_expertise_image(new_src)
+                raise
+            if old_src and old_src != new_src:
+                delete_expertise_image(old_src)
+        broadcast("change", {"type": "expertise-images", "action": "update" if new_src else "reset", "index": index})
+        return self.send_json(200, items[index])
+
     def album_api(self, method, parts):
         """GET công khai, POST thêm ảnh, PUT chú thích, DELETE một ảnh hoặc nhiều ảnh."""
         is_admin = self.is_auth()
@@ -435,6 +520,8 @@ class Handler(BaseHTTPRequestHandler):
 
         if name == "album":
             return self.album_api(method, parts)
+        if name == "expertise-images":
+            return self.expertise_api(method, parts)
 
         if name not in TYPES:
             raise ApiError("Không tìm thấy API", 404)
@@ -525,7 +612,9 @@ class Handler(BaseHTTPRequestHandler):
         p = unquote(path)
         if p == "/":
             p = "/index.html"
-        if p.startswith("/album/"):
+        if p.startswith("/expertise/"):
+            base, rel = EXPERTISE_DIR, p[len("/expertise/"):]
+        elif p.startswith("/album/"):
             base, rel = ALBUM_DIR, p[len("/album/"):]
         elif p.startswith("/uploads/"):
             base, rel = UPLOAD_DIR, p[len("/uploads/"):]
@@ -548,7 +637,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(body)))
-        self.send_header("Cache-Control", "public, max-age=604800" if p.startswith(("/uploads/", "/album/")) else "no-cache")
+        self.send_header("Cache-Control", "public, max-age=604800" if p.startswith(("/uploads/", "/album/", "/expertise/")) else "no-cache")
         self.end_headers()
         self.wfile.write(body)
 

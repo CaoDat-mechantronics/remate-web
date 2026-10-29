@@ -132,3 +132,22 @@ legend small{font-weight:400;color:var(--muted)}
 .album-card-actions{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap}
 .album-card-actions button{font-size:12px}
 @media(max-width:600px){.album-admin-top{padding:16px}.album-upload-drop{padding:18px 12px}.album-admin-grid{grid-template-columns:1fr}.album-admin-top .panel-h{align-items:start;flex-direction:column}}
+
+/* Tab thay ảnh 4 lĩnh vực ở trang Giới thiệu */
+.admin #expertisePanel[hidden]{display:none!important}
+.expertise-admin .panel{padding:25px}
+.expertise-admin .panel-h h2{color:var(--g800);font-size:clamp(20px,2.3vw,28px)}
+.expertise-admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:18px;margin-top:22px}
+.expertise-admin-card{border:1px solid var(--line);background:#fff;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.expertise-admin-index{font-size:12px;font-weight:800;color:var(--g600);letter-spacing:1px}
+.expertise-admin-image{width:108px;height:108px;display:grid;place-items:center;border-radius:16px;background:#eaf2e7;border:1px solid #d6e5d0;overflow:hidden}
+.expertise-admin-image img{width:100%;height:100%;object-fit:contain;padding:6px}
+.expertise-admin-image .ic{width:62px;height:62px;color:var(--g700)}
+.expertise-admin-card h3{color:var(--g800);font-size:15px;line-height:1.5;min-height:45px}
+.expertise-admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+.expertise-admin-actions .btn{flex:1;font-size:12px}
+.expertise-admin-upload{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.expertise-admin-upload input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.expertise-admin-upload.is-busy{opacity:.55;pointer-events:none}
+.expertise-admin-status{margin-top:16px;font-size:13px;color:var(--g700);min-height:1.5em}
+@media(max-width:600px){.expertise-admin .panel{padding:16px}}
