@@ -34,6 +34,7 @@
       <button class="tab" data-type="services">🛠️ Dịch vụ</button>
       <button class="tab" data-type="album">📸 Album hoạt động</button>
       <button class="tab" data-type="expertise-images">🖼️ Ảnh lĩnh vực</button>
+      <button class="tab" data-type="service-covers">🏭 Ảnh nhóm dịch vụ</button>
     </div>
 
     <div class="a-grid">
@@ -127,6 +128,16 @@
         <p id="expertiseStatus" class="expertise-admin-status" role="status" aria-live="polite"></p>
       </div>
     </section>
+    <!-- Ảnh đại diện lớn 3 nhóm dịch vụ, độc lập ảnh của bài đăng -->
+    <section id="serviceCoversPanel" class="service-covers-admin" hidden aria-label="Quản lý ảnh đại diện nhóm dịch vụ">
+      <div class="panel">
+        <div class="panel-h"><div><span class="eyebrow">Giao diện trang Dịch vụ</span><h2>Ảnh đại diện 3 nhóm dịch vụ</h2></div>
+          <a href="dich-vu.html#danh-sach-dich-vu" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Xem trang Dịch vụ ↗</a></div>
+        <p class="partner-admin-note">Chọn ảnh riêng cho từng nhóm dịch vụ. Khi thay ảnh, khung lớn trên <code>dich-vu.html</code> tự cập nhật, còn các ảnh của <b>bài đăng dịch vụ</b> không thay đổi. Ảnh lưu tại <code>public/service-covers/</code>.</p>
+        <div id="serviceCoversGrid" class="service-covers-admin-grid" aria-live="polite"></div>
+        <p id="serviceCoversStatus" role="status" aria-live="polite" class="expertise-admin-status"></p>
+      </div>
+    </section>
     <!-- Album hoạt động: tách biệt khỏi form và ảnh của bài đăng -->
     <section id="albumPanel" class="album-admin" hidden aria-label="Quản lý album hình ảnh hoạt động">
       <div class="panel album-admin-top">
@@ -163,5 +174,6 @@
 <script src="js/admin.js"></script>
 <script src="js/admin-album.js"></script>
 <script src="js/admin-expertise.js"></script>
+<script src="js/admin-service-covers.js"></script>
 </body>
 </html>

@@ -44,18 +44,20 @@
   /* ---------- Chuyển tab ---------- */
   document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => switchType(t.dataset.type)));
   function switchType(t) {
-    if (t === 'album' || t === 'expertise-images') {
+    if (t === 'album' || t === 'expertise-images' || t === 'service-covers') {
       type = t;
       document.querySelectorAll('.tab').forEach((x) => x.classList.toggle('active', x.dataset.type === t));
       document.querySelector('.a-grid').hidden = true;
       document.getElementById('albumPanel').hidden = t !== 'album';
       document.getElementById('expertisePanel').hidden = t !== 'expertise-images';
-      document.dispatchEvent(new CustomEvent(t === 'album' ? 'remate:album-open' : 'remate:expertise-open'));
+      document.getElementById('serviceCoversPanel').hidden = t !== 'service-covers';
+      document.dispatchEvent(new CustomEvent(({album:'remate:album-open', 'expertise-images':'remate:expertise-open', 'service-covers':'remate:service-covers-open'})[t]));
       return;
     }
     document.querySelector('.a-grid').hidden = false;
     document.getElementById('albumPanel').hidden = true;
     document.getElementById('expertisePanel').hidden = true;
+    document.getElementById('serviceCoversPanel').hidden = true;
     type = t;
     document.body.classList.toggle('partner-mode', t === 'partners');
     document.body.classList.toggle('service-mode', t === 'services');

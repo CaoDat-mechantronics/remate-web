@@ -409,6 +409,7 @@ button,input,select,textarea{font:inherit}
 .rm-service-feature.reverse .rm-service-feature-media{order:2}
 .rm-service-feature-media{position:relative;min-height:420px;overflow:hidden;background:var(--g900)}
 .rm-service-feature-media>img{height:100%;width:100%;object-fit:cover;position:absolute;inset:0}
+.rm-service-feature-media>img[hidden],.rm-energy-visual-inner[hidden]{display:none!important}
 .rm-service-feature-media>span:last-child{position:absolute;left:22px;bottom:22px;background:rgba(21,57,34,.88);color:#fff;padding:10px 15px;border-radius:9px;font-size:12px;letter-spacing:.6px;font-weight:700}
 .rm-service-feature-body{padding:clamp(28px,4vw,60px);display:flex;align-items:flex-start;justify-content:center;flex-direction:column}
 .rm-service-feature-body h2{color:var(--g900);font-size:clamp(24px,2.6vw,34px);line-height:1.36;max-width:540px;margin-bottom:18px}
@@ -592,6 +593,42 @@ button,input,select,textarea{font:inherit}
 @media(max-width:480px){.rm-about-expertise-grid{grid-template-columns:1fr}.rm-expertise-card{min-height:170px}.rm-about-album-heading{flex-direction:column}.rm-about-hero-buttons .btn{width:100%}.rm-about-hero-line{gap:9px;letter-spacing:.7px}}
 @media(prefers-reduced-motion:reduce){.rm-album-image img{transition:none}}
 
-/* Quản trị có thể tùy chỉnh ảnh đại diện lĩnh vực; ảnh luôn hiển thị đủ. */
-.rm-expertise-icon.has-custom-image{background:#f4f8f2;overflow:hidden}
-.rm-expertise-custom-image{display:block;width:100%;height:100%;object-fit:contain;padding:4px;border-radius:9px}
+/* Ảnh lĩnh vực trang Giới thiệu: khung rộng gần bằng phần nội dung thẻ.
+   object-fit:contain giữ toàn bộ ảnh, không cắt mép, kể cả ảnh dọc. */
+.rm-expertise-card{min-height:325px}
+.rm-expertise-icon.has-custom-image{
+  width:100%;
+  height:164px;
+  margin-bottom:18px;
+  padding:7px;
+  background:#f4f8f2;
+  border-radius:12px;
+  overflow:hidden;
+}
+.rm-expertise-custom-image{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+  border-radius:8px;
+}
+/* Khi chưa có ảnh tùy chỉnh, biểu tượng vẫn nằm giữa vùng hình có kích thước đồng nhất. */
+.rm-expertise-icon:not(.has-custom-image){
+  width:100%;
+  height:164px;
+  margin-bottom:18px;
+  background:transparent;
+}
+.rm-expertise-icon:not(.has-custom-image) .ic{
+  width:78px;
+  height:78px;
+  padding:20px;
+  background:#e6f0e3;
+  border-radius:16px;
+}
+@media(max-width:480px){
+  .rm-expertise-card{min-height:310px}
+  .rm-expertise-icon.has-custom-image,
+  .rm-expertise-icon:not(.has-custom-image){height:178px}
+}
