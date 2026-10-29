@@ -34,6 +34,8 @@ ROOT = Path(__file__).resolve().parent
 PUBLIC_DIR = ROOT / "public"
 DATA_DIR = Path(os.environ.get("DATA_DIR", ROOT / "data")).resolve()
 UPLOAD_DIR = Path(os.environ.get("UPLOAD_DIR", PUBLIC_DIR / "uploads")).resolve()
+ALBUM_DIR = Path(os.environ.get("ALBUM_DIR", PUBLIC_DIR / "album")).resolve()
+MAX_ALBUM_IMAGE_BYTES = 8 * 1024 * 1024  # 8 MiB/ảnh, không giới hạn tổng số ảnh
 TYPES = ("products", "projects", "partners", "services")
 SERVICE_GROUPS = (
     "Kiểm tra, bảo trì thiết bị tại nhà máy",
@@ -46,6 +48,7 @@ SESSION_SECONDS = 8 * 60 * 60
 
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+ALBUM_DIR.mkdir(parents=True, exist_ok=True)
 
 MIME = {
     ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
@@ -235,6 +238,51 @@ def normalize(kind, b, old=None):
     return item
 
 
+
+# ---------------- Album hình ảnh hoạt động (lưu riêng public/album) ----------------
+def store_album_image(dataurl):
+    """Giới hạn 8 MiB/ảnh, xác minh kiểu ảnh bằng chữ ký file; không nhận SVG."""
+    if not isinstance(dataurl, str):
+        raise ApiError("Dữ liệu ảnh không hợp lệ")
+    m = DATAURL_RE.fullmatch(dataurl.strip())
+    if not m:
+        raise ApiError("Album chỉ nhận ảnh PNG, JPG, WebP hoặc GIF")
+    ext = m.group(1).lower().replace("jpeg", "jpg")
+    raw = m.group(2)
+    if len(raw) > ((MAX_ALBUM_IMAGE_BYTES + 2) // 3 * 4 + 16):
+        raise ApiError("Mỗi ảnh không được vượt quá 8 MB", 413)
+    try:
+        binary = base64.b64decode(raw, validate=True)
+    except (ValueError, base64.binascii.Error):
+        raise ApiError("Nội dung ảnh không hợp lệ")
+    if not binary or len(binary) > MAX_ALBUM_IMAGE_BYTES:
+        raise ApiError("Mỗi ảnh phải có dữ liệu và không vượt quá 8 MB", 413)
+    sig_ok = (
+        (ext == "jpg" and binary.startswith(b"\xff\xd8\xff")) or
+        (ext == "png" and binary.startswith(b"\x89PNG\r\n\x1a\n")) or
+        (ext == "webp" and binary.startswith(b"RIFF") and binary[8:12] == b"WEBP") or
+        (ext == "gif" and binary[:6] in (b"GIF87a", b"GIF89a"))
+    )
+    if not sig_ok:
+        raise ApiError("Định dạng file ảnh không khớp với dữ liệu")
+    filename = f"{int(time.time()*1000)}-{secrets.token_hex(8)}.{ext}"
+    (ALBUM_DIR / filename).write_bytes(binary)
+    return "/album/" + filename
+
+
+def delete_album_image(src):
+    if not isinstance(src, str) or not src.startswith("/album/"):
+        return
+    name = src[len("/album/"):]
+    if not name or name != Path(name).name:
+        return
+    path = (ALBUM_DIR / name).resolve()
+    if path.parent == ALBUM_DIR:
+        try:
+            path.unlink(missing_ok=True)
+        except OSError:
+            pass
+
 # ---------------- HTTP Handler ----------------
 class Handler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
@@ -312,6 +360,61 @@ class Handler(BaseHTTPRequestHandler):
                 pass
 
     # ----- API -----
+
+    def album_api(self, method, parts):
+        """GET công khai, POST thêm ảnh, PUT chú thích, DELETE một ảnh hoặc nhiều ảnh."""
+        is_admin = self.is_auth()
+        album_id = unquote(parts[2]) if len(parts) > 2 else None
+        if method == "GET" and not album_id:
+            return self.send_json(200, sorted(read_all("album"), key=lambda i: i.get("createdAt", ""), reverse=True))
+        if not is_admin:
+            raise ApiError("Cần đăng nhập admin", 401)
+        body = self.read_body() if method in ("POST", "PUT", "DELETE") else {}
+        with _data_lock:
+            items = read_all("album")
+            if method == "POST" and not album_id:
+                if not isinstance(body, dict):
+                    raise ApiError("Dữ liệu không hợp lệ")
+                caption = text(body.get("caption"), 250)
+                src = store_album_image(body.get("image"))
+                item = {"id": secrets.token_hex(8), "src": src, "caption": caption,
+                        "createdAt": now_iso()}
+                try:
+                    write_all("album", items + [item])
+                except Exception:
+                    delete_album_image(src)
+                    raise
+                action, status, response = "create", 201, item
+            elif method == "PUT" and album_id:
+                it = next((x for x in items if x.get("id") == album_id), None)
+                if it is None:
+                    raise ApiError("Không tìm thấy ảnh", 404)
+                it["caption"] = text(body.get("caption"), 250)
+                write_all("album", items)
+                action, status, response = "update", 200, it
+            elif method == "DELETE" and album_id:
+                if album_id == "selected":
+                    ids = body.get("ids") if isinstance(body, dict) else None
+                    if not isinstance(ids, list) or not ids or len(ids) > 500 or any(not isinstance(v, str) for v in ids):
+                        raise ApiError("Danh sách ảnh cần xóa không hợp lệ")
+                    selected = set(ids)
+                    deleting = [x for x in items if x.get("id") in selected]
+                    if not deleting:
+                        raise ApiError("Không tìm thấy ảnh để xóa", 404)
+                else:
+                    deleting = [x for x in items if x.get("id") == album_id]
+                    if not deleting:
+                        raise ApiError("Không tìm thấy ảnh", 404)
+                deleted = {x["id"] for x in deleting}
+                write_all("album", [x for x in items if x.get("id") not in deleted])
+                for item in deleting:
+                    delete_album_image(item.get("src"))
+                action, status, response = "delete", 200, {"ok": True, "deleted": len(deleting)}
+            else:
+                raise ApiError("Phương thức không hỗ trợ", 405)
+        broadcast("change", {"type": "album", "action": action})
+        return self.send_json(status, response)
+
     def api(self, method, path):
         parts = [p for p in path.split("/") if p]  # ['api', kind, id]
         name = parts[1] if len(parts) > 1 else ""
@@ -329,6 +432,9 @@ class Handler(BaseHTTPRequestHandler):
         if name == "me":
             ok = self.is_auth()
             return self.send_json(200 if ok else 401, {"ok": ok})
+
+        if name == "album":
+            return self.album_api(method, parts)
 
         if name not in TYPES:
             raise ApiError("Không tìm thấy API", 404)
@@ -419,7 +525,9 @@ class Handler(BaseHTTPRequestHandler):
         p = unquote(path)
         if p == "/":
             p = "/index.html"
-        if p.startswith("/uploads/"):
+        if p.startswith("/album/"):
+            base, rel = ALBUM_DIR, p[len("/album/"):]
+        elif p.startswith("/uploads/"):
             base, rel = UPLOAD_DIR, p[len("/uploads/"):]
         else:
             base, rel = PUBLIC_DIR, p.lstrip("/")
@@ -440,7 +548,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(body)))
-        self.send_header("Cache-Control", "public, max-age=604800" if p.startswith("/uploads/") else "no-cache")
+        self.send_header("Cache-Control", "public, max-age=604800" if p.startswith(("/uploads/", "/album/")) else "no-cache")
         self.end_headers()
         self.wfile.write(body)
 

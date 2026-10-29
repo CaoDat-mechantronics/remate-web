@@ -32,6 +32,7 @@
       <button class="tab" data-type="projects">🏗️ Dự án</button>
       <button class="tab" data-type="partners">🤝 Đối tác</button>
       <button class="tab" data-type="services">🛠️ Dịch vụ</button>
+      <button class="tab" data-type="album">📸 Album hoạt động</button>
     </div>
 
     <div class="a-grid">
@@ -115,6 +116,31 @@
         <div id="postList" class="post-list"></div>
       </div>
     </div>
+    <!-- Album hoạt động: tách biệt khỏi form và ảnh của bài đăng -->
+    <section id="albumPanel" class="album-admin" hidden aria-label="Quản lý album hình ảnh hoạt động">
+      <div class="panel album-admin-top">
+        <div class="panel-h"><div><span class="eyebrow">Thư viện công ty</span><h2>Album hình ảnh hoạt động</h2></div>
+          <a href="gioi-thieu.html#hinh-anh-hoat-dong" class="btn btn-outline btn-sm" target="_blank" rel="noopener">Xem album công khai ↗</a></div>
+        <p class="album-admin-help">Chọn nhiều ảnh để tải lên. Ảnh được lưu trong <code>public/album/</code>, tách khỏi ảnh sản phẩm và dịch vụ. Không giới hạn tổng số ảnh trong album; tối đa 8 MB mỗi ảnh sau khi nén.</p>
+        <div class="album-upload-bar">
+          <label class="album-upload-drop" id="albumDrop" for="albumFileInput">
+            <span class="album-upload-icon">＋</span><span><strong>Chọn ảnh hoặc kéo thả vào đây</strong><small>JPG, PNG, WebP, GIF · Nén tự động, giữ tỷ lệ ảnh</small></span>
+          </label>
+          <input id="albumFileInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple hidden>
+        </div>
+        <p class="album-upload-status" id="albumStatus" role="status" aria-live="polite"></p>
+      </div>
+      <div class="panel">
+        <div class="album-admin-toolbar">
+          <div><h3>Ảnh đã lưu <span id="albumCount" class="album-count">0</span></h3><p class="album-admin-help">Tích chọn ảnh cần xóa hoặc sửa phần chú thích ngay trên ảnh.</p></div>
+          <div class="album-admin-actions">
+            <label class="album-select-all"><input type="checkbox" id="albumSelectAll"> Chọn tất cả</label>
+            <button type="button" class="btn btn-danger btn-sm" id="albumDeleteSelected" disabled>Xóa ảnh đã chọn <span id="albumSelectedCount"></span></button>
+          </div>
+        </div>
+        <div id="albumAdminGrid" class="album-admin-grid"><p class="empty">Đang tải album...</p></div>
+      </div>
+    </section>
   </div>
 
   <div class="modal" id="preview"><div class="modal-box"><button class="x" type="button" id="closePv">✕</button><p class="eyebrow">Xem trước thẻ hiển thị</p><div id="pvCard" style="max-width:340px"></div></div></div>
@@ -124,5 +150,6 @@
 <script src="js/config.js"></script>
 <script src="js/common.js"></script>
 <script src="js/admin.js"></script>
+<script src="js/admin-album.js"></script>
 </body>
 </html>

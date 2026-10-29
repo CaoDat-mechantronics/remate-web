@@ -156,3 +156,9 @@ Dữ liệu lưu trong `data/partners.json` và `public/uploads/`. **Không mấ
 - Khách bấm vào thẻ để mở `chi-tiet.html?type=services&id=<slug>` và xem thuộc tính cùng hình ảnh.
 - **Khi nâng cấp website có dữ liệu thật**: Sao lưu `data/` và `public/uploads/`, chỉ chép các file trong gói cập nhật thay vì ghi đè toàn bộ; nếu đã có `data/services.json` thì không thay thế bằng file mẫu rỗng.
 - Nếu dùng Render Free với lưu trữ JSON/ảnh hiện tại, nội dung mới có thể mất khi máy ngủ hoặc deploy lại. Cần ổ lưu trữ bền vững để vận hành lâu dài.
+
+## Bổ sung: Trang Giới thiệu và Album hình ảnh hoạt động
+
+Menu **Giới thiệu** trỏ đến `gioi-thieu.html`, với nội dung giới thiệu ReMate và album ảnh chuyển slide. Ảnh được quản trị trong tab **📸 Album hoạt động** tại `admin.html`, lưu riêng `data/album.json` và `public/album/`.
+
+Xem hướng dẫn chi tiết trong `HUONG_DAN_GIOI_THIEU_ALBUM.md`.

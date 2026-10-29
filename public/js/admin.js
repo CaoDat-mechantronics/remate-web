@@ -44,6 +44,16 @@
   /* ---------- Chuyển tab ---------- */
   document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => switchType(t.dataset.type)));
   function switchType(t) {
+    if (t === 'album') {
+      type = t;
+      document.querySelectorAll('.tab').forEach((x) => x.classList.toggle('active', x.dataset.type === t));
+      document.querySelector('.a-grid').hidden = true;
+      document.getElementById('albumPanel').hidden = false;
+      document.dispatchEvent(new CustomEvent('remate:album-open'));
+      return;
+    }
+    document.querySelector('.a-grid').hidden = false;
+    document.getElementById('albumPanel').hidden = true;
     type = t;
     document.body.classList.toggle('partner-mode', t === 'partners');
     document.body.classList.toggle('service-mode', t === 'services');
@@ -223,7 +233,7 @@
   $('#pvCard').addEventListener('click', (e) => e.preventDefault());
 
   /* Đồng bộ khi có admin khác thay đổi */
-  onLiveChange((d) => { if (d.type === type && !$('#appView').hidden) loadList(); });
+  onLiveChange((d) => { if (type !== 'album' && d.type === type && !$('#appView').hidden) loadList(); });
 
   check();
 })();

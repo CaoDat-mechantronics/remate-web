@@ -10,7 +10,7 @@
 
   /* ---------- Header ---------- */
   const nav = [
-    ['index.html', 'Trang chủ', 'home'], ['index.html#gioi-thieu', 'Giới thiệu', 'about'],
+    ['index.html', 'Trang chủ', 'home'], ['gioi-thieu.html', 'Giới thiệu', 'about'],
     ['du-an.html', 'Dự án', 'projects'],
     ['doi-tac.html', 'Đối tác', 'partners'], ['index.html#lien-he', 'Liên hệ', 'contact']
   ];

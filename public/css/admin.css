@@ -101,3 +101,34 @@ legend small{font-weight:400;color:var(--muted)}
 .admin.service-mode .post img{object-fit:cover}
 .admin .only-service .partner-admin-note{margin:0 0 5px}
 @media(max-width:600px){.admin .tabs .tab{flex:1;min-width:calc(50% - 8px);padding:11px 8px}}
+
+/* ===== Tab riêng quản lý Album hình ảnh hoạt động ===== */
+.admin .a-grid[hidden],.admin #albumPanel[hidden]{display:none!important}
+.album-admin{display:grid;gap:20px}
+.album-admin-top{padding:26px}
+.album-admin-top .panel-h{align-items:center;margin-bottom:15px}
+.album-admin-top h2{font-size:clamp(22px,2.6vw,30px);color:var(--g800)}
+.album-admin-help{color:var(--muted);font-size:13px;line-height:1.75;margin:8px 0 18px}
+.album-admin-help code{background:var(--g100);color:var(--g800);padding:2px 6px;border-radius:5px}
+.album-upload-drop{border:2px dashed #91b99b;border-radius:15px;padding:25px 20px;display:flex;gap:18px;align-items:center;cursor:pointer;background:#f5faf3;transition:.2s}
+.album-upload-drop:hover,.album-upload-drop.over{border-color:var(--g600);background:#e7f1e3}
+.album-upload-icon{width:50px;height:50px;flex:none;display:grid;place-items:center;border-radius:50%;background:var(--g700);color:#fff;font-size:30px;font-weight:300}
+.album-upload-drop strong{display:block;color:var(--g800);font-size:15px}.album-upload-drop small{display:block;color:var(--muted);font-size:12px;font-weight:400}
+.album-upload-status{font-size:13px;color:var(--g700);margin-top:12px;min-height:1.4em}
+.album-admin-toolbar{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:18px}
+.album-admin-toolbar h3{font-size:20px;color:var(--g800)}
+.album-admin-toolbar .album-admin-help{margin:2px 0 0}
+.album-count{font-size:14px;color:var(--g700);background:var(--g100);border-radius:30px;padding:3px 9px}
+.album-admin-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.album-select-all{display:flex;align-items:center;gap:6px;cursor:pointer}.album-select-all input{height:18px;width:18px}
+.album-admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+.album-admin-card{border:1px solid var(--line);border-radius:13px;overflow:hidden;background:#fff;position:relative}
+.album-admin-card>img{display:block;width:100%;height:178px;object-fit:contain;background:#f0f5ed}
+.album-card-check{position:absolute;left:10px;top:10px;background:#fff;border-radius:8px;padding:5px 9px;box-shadow:0 3px 12px #12341822;display:flex;align-items:center;gap:6px;font-size:12px;z-index:1}
+.album-card-check input{width:16px;height:16px}
+.album-card-edit{padding:12px;display:grid;gap:8px}
+.album-card-edit label{font-size:12px;color:var(--g800)}
+.album-card-edit input{font-size:13px}
+.album-card-actions{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap}
+.album-card-actions button{font-size:12px}
+@media(max-width:600px){.album-admin-top{padding:16px}.album-upload-drop{padding:18px 12px}.album-admin-grid{grid-template-columns:1fr}.album-admin-top .panel-h{align-items:start;flex-direction:column}}

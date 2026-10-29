@@ -39,22 +39,6 @@
   </div></div>
 </section>
 
-<!-- ===== GIỚI THIỆU ===== -->
-<section class="section alt" id="gioi-thieu">
-  <div class="container about">
-    <div class="about-img reveal">
-      <img src="img/flyer.jpg" alt="Ấn phẩm giới thiệu ReMate" style="cursor:zoom-in" onclick="lightbox(this.src)">
-      <div class="badge">Chi phí tối ưu – Giá trị tối đa</div>
-    </div>
-    <div class="reveal">
-      <span class="eyebrow">Về chúng tôi</span>
-      <div class="sec-head" style="margin-bottom:10px"><h2 id="aboutTitle"></h2></div>
-      <p id="aboutIntro" style="color:#3a4a40"></p>
-      <ul id="aboutList"></ul>
-      <a class="btn btn-primary" href="#lien-he">Liên hệ hợp tác</a>
-    </div>
-  </div>
-</section>
 
 <!-- ===== SẢN PHẨM MỚI ===== -->
 <section class="section">
@@ -143,9 +127,6 @@
   document.getElementById('services').innerHTML = S.services.map((s) =>
     `<div class="service"><div class="circle">${ic(s.icon)}</div><h3>${s.title}</h3></div>`).join('');
 
-  set('aboutTitle', S.fullName.replace('CÔNG TY', 'Công ty').replace('CỔ PHẦN', 'Cổ phần').replace('VẬT TƯ TÁI SỬ DỤNG', 'Vật tư Tái sử dụng'));
-  set('aboutIntro', S.intro);
-  document.getElementById('aboutList').innerHTML = S.services.map((s) => `<li>${ic(s.icon)}<span>${s.title}</span></li>`).join('');
 
   document.getElementById('contactList').innerHTML = [
     ['phone', 'Số điện thoại', `<a href="tel:${S.phoneRaw}">${S.phone}</a>`],
