@@ -33,7 +33,6 @@
       </div>
     </div>
     <div class="services reveal" id="services"></div>
-    <div class="strengths" id="strengths"></div>
   </div>
   <div class="tagline-bar"><div class="container">
     <p><span class="ic" id="leafIc"></span><span id="tagline"></span></p>
@@ -145,8 +144,6 @@
 
   document.getElementById('services').innerHTML = S.services.map((s) =>
     `<div class="service"><div class="circle">${ic(s.icon)}</div><h3>${s.title}</h3></div>`).join('');
-  document.getElementById('strengths').innerHTML = S.highlights.map((h) =>
-    `<div class="strength reveal"><img src="${h.img}" alt="${h.title}"><div class="cap">${ic(h.icon)}<div><b>${h.title}</b><small>${h.desc}</small></div></div></div>`).join('');
 
   set('aboutTitle', S.fullName.replace('CÔNG TY', 'Công ty').replace('CỔ PHẦN', 'Cổ phần').replace('VẬT TƯ TÁI SỬ DỤNG', 'Vật tư Tái sử dụng'));
   set('aboutIntro', S.intro);

@@ -23,7 +23,6 @@
     <a class="brand" href="index.html"><img src="img/logo-icon.png" alt="ReMate logo"><span><b>ReMate</b><small>VẬT TƯ TÁI SỬ DỤNG</small></span></a>
     <nav class="nav" id="nav">
       ${nav.map(([h, t, k]) => `<a href="${h}" class="${k === page ? 'active' : ''}">${t}</a>`).join('')}
-      <a class="btn btn-primary btn-sm" href="tel:${S.phoneRaw}">${ic('phone')} Gọi ngay</a>
     </nav>
     <button class="burger" id="burger" aria-label="Mở menu"><span></span><span></span><span></span></button>
   </div></header>`;
