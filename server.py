@@ -41,6 +41,8 @@ MAX_SERVICE_COVER_BYTES = 6 * 1024 * 1024  # 6 MiB per image
 MAX_EXPERTISE_IMAGE_BYTES = 5 * 1024 * 1024  # Mỗi ô dùng một ảnh ≤ 5 MiB
 MAX_ALBUM_IMAGE_BYTES = 8 * 1024 * 1024  # 8 MiB/ảnh, không giới hạn tổng số ảnh
 TYPES = ("products", "projects", "partners", "services")
+PRODUCT_CATEGORIES = ("Phế liệu", "Vật tư", "Máy móc - thiết bị")
+PROJECT_CATEGORIES = ("Bảo trì - bảo dưỡng", "Thiết kế - gia công", "Cải tiến - cải tạo", "Tư vấn - giải pháp")
 SERVICE_GROUPS = (
     "Kiểm tra, bảo trì thiết bị tại nhà máy",
     "Thiết kế, gia công, chế tạo máy theo yêu cầu",
@@ -198,6 +200,15 @@ def normalize(kind, b, old=None):
             raise ApiError("Tên không được để trống")
         if not text(b.get("summary"), 500):
             raise ApiError("Vui lòng nhập mô tả ngắn về đối tác")
+    if kind in ("products", "projects"):
+        category = text(b.get("category"), 100)
+        allowed = PRODUCT_CATEGORIES if kind == "products" else PROJECT_CATEGORIES
+        # Cho phép giữ nguyên danh mục cũ khi Ẩn/Hiện bài cũ (PUT từ Admin).
+        # Bài mới và những lần đổi danh mục đều phải dùng danh mục quy định.
+        unchanged_legacy = old is not None and category == text(old.get("category"), 100)
+        if category not in allowed and not unchanged_legacy:
+            what = "sản phẩm" if kind == "products" else "dự án"
+            raise ApiError(f"Lĩnh vực {what} chỉ được chọn: {', '.join(allowed)}")
     if kind == "services":
         if not text(b.get("title"), 200):
             raise ApiError("Vui lòng nhập tên dịch vụ")

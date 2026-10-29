@@ -6,7 +6,28 @@
   let token = sessionStorage.getItem('remate_token') || '';
   let type = 'products', editingId = null, images = [], items = [];
   const serviceGroups = (window.SITE && SITE.serviceGroups) || [];
+  // Danh mục cố định cho Sản phẩm và Dự án. Đối tác vẫn cho nhập lĩnh vực tự do.
+  const categoryOptions = {
+    products: ['Phế liệu', 'Vật tư', 'Máy móc - thiết bị'],
+    projects: ['Bảo trì - bảo dưỡng', 'Thiết kế - gia công', 'Cải tiến - cải tạo', 'Tư vấn - giải pháp']
+  };
+  const categoryNotice = $('#legacyCategoryNotice');
   const serviceGroup = $('#serviceGroup');
+  function configureCategory(t) {
+    const fixed = Object.prototype.hasOwnProperty.call(categoryOptions, t);
+    F.category.disabled = !fixed;
+    F.category.required = fixed;
+    F.category.style.display = fixed ? '' : 'none';
+    F.partnerCategory.disabled = t !== 'partners';
+    F.partnerCategory.style.display = t === 'partners' ? '' : 'none';
+    categoryNotice.hidden = true;
+    categoryNotice.textContent = '';
+    if (fixed) {
+      F.category.innerHTML = '<option value="">-- Chọn lĩnh vực --</option>' +
+        categoryOptions[t].map((v) => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+      F.category.setAttribute('aria-label', t === 'products' ? 'Chọn danh mục sản phẩm' : 'Chọn lĩnh vực dự án');
+    }
+  }
   serviceGroup.innerHTML = '<option value="">-- Chọn nhóm dịch vụ --</option>' + serviceGroups.map((g) => `<option value="${esc(g.title)}">${esc(g.title)}</option>`).join('');
 
   const redirectToLogin = () => {
@@ -67,12 +88,12 @@
     document.querySelectorAll('.only-service').forEach((el) => (el.style.display = t === 'services' ? '' : 'none'));
     serviceGroup.disabled = t !== 'services';
     serviceGroup.required = t === 'services';
-    F.category.disabled = t === 'services';
+    configureCategory(t);
     document.querySelectorAll('.only-partner').forEach((el) => (el.style.display = t === 'partners' ? '' : 'none'));
     document.querySelectorAll('.only-post').forEach((el) => (el.style.display = t !== 'partners' ? '' : 'none'));
     $('#listTitle').textContent = ({products:'Danh sách sản phẩm', projects:'Danh sách dự án', partners:'Danh sách đối tác', services:'Danh sách dịch vụ'})[t];
     $('#mainTitleLabel').textContent = t === 'partners' ? 'Tên doanh nghiệp / đối tác' : t === 'services' ? 'Tên dịch vụ' : 'Tên';
-    $('#categoryLabel').textContent = t === 'partners' ? 'Lĩnh vực hợp tác' : 'Danh mục / Lĩnh vực';
+    $('#categoryLabel').textContent = t === 'products' ? 'Danh mục sản phẩm' : t === 'projects' ? 'Lĩnh vực dự án' : 'Lĩnh vực hợp tác';
     F.category.closest('label').style.display = t === 'services' ? 'none' : '';
     $('#summaryLabel').textContent = t === 'partners' ? 'Giới thiệu ngắn về đối tác (hiển thị công khai)' : t === 'services' ? 'Mô tả ngắn dịch vụ (hiển thị trên danh sách)' : 'Mô tả ngắn (hiển thị trên thẻ)';
     $('#contentLabel').textContent = t === 'services' ? 'Mô tả chi tiết dịch vụ' : 'Nội dung chi tiết';
@@ -88,7 +109,10 @@
   /* ---------- Danh sách ---------- */
   async function loadList() {
     try { items = await authApi(type); } catch (e) { if (/đăng nhập/i.test(e.message)) return redirectToLogin(); items = []; }
-    $('#catList').innerHTML = [...new Set(items.map((x) => x.category).filter(Boolean))].map((c) => `<option>${esc(c)}</option>`).join('');
+    // Chỉ lĩnh vực Đối tác mới được gợi ý từ những dữ liệu đã nhập.
+    $('#catList').innerHTML = type === 'partners'
+      ? [...new Set(items.map((x) => x.category).filter(Boolean))].map((c) => `<option>${esc(c)}</option>`).join('')
+      : '';
     renderList();
   }
   function renderList() {
@@ -126,6 +150,8 @@
   const FIELDS = ['title', 'category', 'summary', 'content', 'website', 'price', 'condition', 'quantity', 'origin', 'client', 'location', 'time', 'scope', 'result'];
   function resetForm() {
     editingId = null; images = []; form.reset(); F.published.checked = true;
+    categoryNotice.hidden = true;
+    categoryNotice.textContent = '';
     $('#specs').innerHTML = ''; $('#serviceSpecs').innerHTML = '';
     serviceGroup.value = '';
     if (type === 'products') { addSpec(); addSpec(); }
@@ -137,6 +163,13 @@
   function fillForm(x) {
     resetForm(); editingId = x.id;
     FIELDS.forEach((f) => { if (F[f]) F[f].value = x[f] || ''; });
+    if (type === 'partners') F.partnerCategory.value = x.category || '';
+    if (categoryOptions[type] && !categoryOptions[type].includes(x.category)) {
+      // Danh mục cũ vẫn hiển thị trong danh sách; phải chọn một danh mục mới khi sửa.
+      F.category.value = '';
+      categoryNotice.textContent = `Danh mục cũ: “${x.category || 'Chưa phân loại'}”. Vui lòng chọn một danh mục mới khi chỉnh sửa bài.`;
+      categoryNotice.hidden = false;
+    }
     if (type === 'services') serviceGroup.value = x.category || '';
     F.featured.checked = !!x.featured; F.published.checked = x.published !== false;
     images = [...(x.images || [])]; renderImgs();
@@ -208,6 +241,7 @@
     FIELDS.forEach((f) => { if (F[f]) d[f] = F[f].value.trim(); });
     d.featured = F.featured.checked; d.published = F.published.checked; d.images = images;
     if (type === 'services') d.category = serviceGroup.value;
+    if (type === 'partners') d.category = F.partnerCategory.value.trim();
     d.specs = [...document.querySelectorAll(type === 'services' ? '#serviceSpecs .spec' : '#specs .spec')].map((r) => ({ key: r.children[0].value.trim(), value: r.children[1].value.trim() })).filter((s) => s.key).slice(0, 30);
     return d;
   }

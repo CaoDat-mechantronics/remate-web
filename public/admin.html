@@ -45,7 +45,13 @@
         <fieldset><legend>1. Thông tin chính</legend>
           <label><span><span id="mainTitleLabel">Tên</span> <span class="req">*</span></span><input name="title" required maxlength="200" placeholder="VD: Máy nén khí trục vít 37kW đã qua sử dụng"></label>
           <div class="row2">
-            <label><span id="categoryLabel">Danh mục / Lĩnh vực</span><input name="category" list="catList" placeholder="Chọn hoặc nhập mới"></label>
+            <label><span id="categoryLabel">Danh mục sản phẩm</span>
+              <select name="category" id="fixedCategory" aria-label="Chọn danh mục sản phẩm" required>
+                <option value="">-- Chọn danh mục --</option>
+              </select>
+              <input name="partnerCategory" id="partnerCategory" list="catList" placeholder="Chọn hoặc nhập lĩnh vực hợp tác" style="display:none" disabled>
+              <small id="legacyCategoryNotice" class="category-legacy-note" hidden></small>
+            </label>
             <label class="only-p">Giá<input name="price" placeholder="VD: 45.000.000 đ hoặc Liên hệ"></label>
             <label class="only-service">Nhóm dịch vụ <span class="req">*</span>
               <select name="serviceGroup" id="serviceGroup" aria-label="Chọn nhóm dịch vụ" disabled>
