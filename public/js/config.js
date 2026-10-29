@@ -12,18 +12,38 @@ window.SITE = {
   phone: '032 675 2517',
   phoneRaw: '0326752517',
   email: 'Datnguyenvan1903@gmail.com',
-  address: 'Xóm 17, Xã Đồng Hỷ, Thái Nguyên',
+  // Địa chỉ mặc định giữ để tương thích với các phần khác của website.
+  address: 'Xóm 17, ngõ Đồng Hỷ, Thái Nguyên',
+  // Hai cơ sở, tọa độ lấy trực tiếp từ liên kết Google Maps đã cung cấp.
+  branches: [
+    {
+      name: 'Cơ sở 1',
+      shortName: 'Thái Nguyên',
+      address: 'Xóm 17, ngõ Đồng Hỷ, Thái Nguyên',
+      mapsUrl: 'https://maps.app.goo.gl/8YpiVqy2Z8SjDeuW8?g_st=iz',
+      lat: 21.6896928,
+      lng: 105.8543588
+    },
+    {
+      name: 'Cơ sở 2',
+      shortName: 'Hà Nội',
+      address: 'Thu Thủy, Đa Phúc, Hà Nội',
+      mapsUrl: 'https://maps.app.goo.gl/7Y3JoLnnwMEAxFBA8?g_st=iz',
+      lat: 21.1976181,
+      lng: 105.9028823
+    }
+  ],
   bankAccount: '8510205068978',
   bankName: 'Agribank',
 
   // ⚠️ THAY bằng link fanpage Facebook thật của công ty
-  facebook: 'https://www.facebook.com/share/1GyrXUiFRZ/?mibextid=wwXIfr',
+  facebook: 'https://www.facebook.com/',
   zalo: 'https://zalo.me/0326752517',
   // TODO: chưa có link tài khoản TikTok chính thức; thay địa chỉ này bằng URL kênh ReMate.
   // Để chuỗi rỗng '' nếu muốn tạm ẩn nút TikTok.
-  tiktok: 'https://www.tiktok.com/@dattotbung?_r=1&_t=ZS-9Aw6fqmqA7w',
-  // Google Maps nhúng (tìm theo địa chỉ)
-  mapEmbed: 'https://www.google.com/maps?q=X%C3%A3%20%C4%90%E1%BB%93ng%20H%E1%BB%B7%2C%20Th%C3%A1i%20Nguy%C3%AAn&output=embed',
+  tiktok: 'https://www.tiktok.com/',
+  // Bản đồ mặc định dự phòng (cơ sở 1).
+  mapEmbed: 'https://maps.google.com/maps?q=21.6896928%2C105.8543588&z=16&output=embed',
 
   // 4 lĩnh vực hoạt động chính của ReMate (hiển thị ở trang chủ và footer).
   services: [

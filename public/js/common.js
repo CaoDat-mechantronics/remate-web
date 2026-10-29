@@ -17,7 +17,7 @@
   const header = `
   <div class="topbar"><div class="container">
     <div><a href="tel:${S.phoneRaw}">${ic('phone')} ${S.phone}</a><a class="hide-sm" href="mailto:${S.email}">${ic('mail')} ${S.email}</a></div>
-    <div><a class="hide-sm">${ic('pin')} ${S.address}</a><a href="${S.facebook}" target="_blank" rel="noopener">${ic('facebook')} Facebook</a></div>
+    <div><a class="hide-sm" href="index.html#lien-he" title="Xem địa chỉ hai cơ sở">${ic('pin')} 2 cơ sở: Thái Nguyên · Hà Nội</a><a href="${S.facebook}" target="_blank" rel="noopener">${ic('facebook')} Facebook</a></div>
   </div></div>
   <header class="header"><div class="container">
     <a class="brand" href="index.html"><img src="img/logo-icon.png" alt="ReMate logo"><span><b>ReMate</b><small>VẬT TƯ TÁI SỬ DỤNG</small></span></a>
@@ -38,7 +38,7 @@
       <div><h4>Lĩnh vực</h4><ul>${S.services.map((s) => `<li>${s.title}</li>`).join('')}</ul></div>
       <div><h4>Liên hệ</h4><ul>
         <li><a href="tel:${S.phoneRaw}">📞 ${S.phone}</a></li><li><a href="mailto:${S.email}">✉️ ${S.email}</a></li>
-        <li>📍 ${S.address}</li><li>🏦 ${S.bankAccount} – ${S.bankName}</li></ul></div>
+        ${(S.branches || []).map((b) => `<li>📍 <a href="${esc(b.mapsUrl)}" target="_blank" rel="noopener noreferrer"><strong>${esc(b.name)}:</strong> ${esc(b.address)}</a></li>`).join('')}<li>🏦 ${S.bankAccount} – ${S.bankName}</li></ul></div>
     </div>
     <div class="bottom">© ${new Date().getFullYear()} ${S.fullName}. ${S.tagline}.</div>
   </div></footer>

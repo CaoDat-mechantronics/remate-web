@@ -174,6 +174,36 @@ button,input,select,textarea{font:inherit}
 .contact-item a:hover{color:var(--g600);text-decoration:underline}
 .map{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);min-height:380px;background:var(--g100)}
 .map iframe{width:100%;height:100%;min-height:380px;border:0}
+/* ===== Hai cơ sở ReMate: địa chỉ + hai ghim Google Maps ===== */
+.contact-overview{align-items:stretch;margin-bottom:28px}
+.contact-overview>.reveal{min-width:0}
+.contact-branches{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:30px;box-shadow:var(--shadow)}
+.contact-branches h3{font-size:clamp(22px,2.6vw,29px);color:var(--g800);line-height:1.3;margin-bottom:7px}
+.contact-branches>p{color:var(--muted);font-size:14.5px;margin-bottom:18px}
+.branch-list{display:grid;gap:12px}
+.branch-link{display:flex;gap:15px;align-items:flex-start;padding:16px;background:var(--bg);border:1px solid var(--line);border-radius:12px;transition:background .2s,border-color .2s,transform .2s}
+.branch-link:hover{background:var(--g100);border-color:var(--g500);transform:translateY(-2px)}
+.branch-marker{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:var(--g700);color:#fff;flex:none}
+.branch-marker .ic{width:22px;height:22px}
+.branch-link-body{display:grid;gap:4px;min-width:0}
+.branch-link-body strong{font-size:16px;color:var(--g800)}
+.branch-link-body small{font-size:14px;color:var(--text);line-height:1.5}
+.branch-link-body em{font-size:12.5px;color:var(--g600);font-style:normal;font-weight:700;margin-top:3px}
+.location-maps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.location-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;scroll-margin-top:100px;min-width:0}
+.location-card-heading{display:flex;gap:14px;padding:22px 22px 18px;align-items:center;min-height:122px}
+.location-number{background:var(--g100);color:var(--g700);font-weight:800;font-size:18px;display:grid;place-items:center;width:46px;height:46px;border-radius:12px;flex:none}
+.location-card-info{min-width:0;flex:1}
+.location-card-info .eyebrow{font-size:11px;margin:0}
+.location-card-info h3{font-size:20px;color:var(--g800);line-height:1.3}
+.location-card-info p{color:var(--muted);font-size:13.5px;display:flex;gap:6px;align-items:flex-start;margin-top:4px}
+.location-card-info p .ic{width:14px;height:14px;flex:none;margin-top:3px;color:var(--g700)}
+.location-directions{white-space:nowrap;padding:8px 12px;flex:none}
+.location-map{background:var(--g100);height:310px;position:relative}
+.location-map iframe{display:block;width:100%;height:100%;border:0}
+.location-mobile-link{display:none}
+@media(max-width:940px){.location-maps{grid-template-columns:1fr}.location-map{height:330px}}
+@media(max-width:520px){.contact-branches{padding:20px}.location-card-heading{padding:18px;flex-wrap:wrap}.location-directions{margin-left:auto}.location-map{height:280px}.location-mobile-link{display:block;padding:12px 18px;text-align:center;font-size:14px;font-weight:700;color:var(--g700);background:var(--g100)}}
 .socials{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
 .social{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;font-weight:700;color:#fff}
 .social .ic{width:22px;height:22px}

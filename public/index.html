@@ -115,13 +115,19 @@
 <section class="section" id="lien-he">
   <div class="container">
     <div class="sec-head"><div><span class="eyebrow">Liên hệ</span><h2>Kết nối với ReMate</h2><p>Liên hệ qua điện thoại, Zalo, TikTok hoặc ghé thăm chúng tôi để trao đổi nhu cầu của doanh nghiệp.</p></div></div>
-    <div class="contact">
+    <div class="contact contact-overview">
       <div class="reveal">
         <div class="contact-list" id="contactList"></div>
         <div class="socials" id="contactSocials"></div>
       </div>
-      <div class="map reveal"><iframe id="map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Bản đồ ReMate"></iframe></div>
+      <aside class="contact-branches reveal" aria-labelledby="contactBranchesTitle">
+        <span class="eyebrow">Địa điểm liên hệ</span>
+        <h3 id="contactBranchesTitle">ReMate có 2 cơ sở</h3>
+        <p>Chọn cơ sở phù hợp để xem vị trí ghim và chỉ đường trên Google Maps.</p>
+        <div class="branch-list" id="branchList"></div>
+      </aside>
     </div>
+    <div class="location-maps" id="locationMaps" aria-label="Bản đồ hai cơ sở của ReMate"></div>
   </div>
 </section>
 
@@ -149,7 +155,6 @@
   document.getElementById('contactList').innerHTML = [
     ['phone', 'Số điện thoại', `<a href="tel:${S.phoneRaw}">${S.phone}</a>`],
     ['mail', 'Email', `<a href="mailto:${S.email}">${S.email}</a>`],
-    ['pin', 'Địa chỉ', S.address],
     ['bank', 'Tài khoản', `${S.bankAccount}<br>${S.bankName}`]
   ].map(([i, l, v]) => `<div class="contact-item">${ic(i)}<div><small>${l}</small><span>${v}</span></div></div>`).join('');
   document.getElementById('contactSocials').innerHTML =
@@ -157,7 +162,28 @@
      <a class="social zl" href="${S.zalo}" target="_blank" rel="noopener">Chat Zalo: ${S.phone}</a>
      ${S.tiktok ? `<a class="social tt" href="${S.tiktok}" target="_blank" rel="noopener noreferrer">${ic('tiktok')} TikTok</a>` : ''}
      <a class="social ph" href="tel:${S.phoneRaw}">${ic('phone')} Gọi ngay</a>`;
-  document.getElementById('map').src = S.mapEmbed;
+  // Hai cơ sở có địa chỉ và ghim bản đồ riêng; không cần API key Google Maps.
+  const branches = Array.isArray(S.branches) ? S.branches : [];
+  document.getElementById('branchList').innerHTML = branches.map((b, i) => `
+    <a class="branch-link" href="#co-so-${i + 1}" aria-label="Xem bản đồ ${esc(b.name)}">
+      <span class="branch-marker">${ic('pin')}</span>
+      <span class="branch-link-body"><strong>${esc(b.name)} · ${esc(b.shortName)}</strong>
+        <small>${esc(b.address)}</small><em>Xem ghim trên bản đồ ↓</em></span>
+    </a>`).join('');
+  document.getElementById('locationMaps').innerHTML = branches.map((b, i) => {
+    const coords = `${b.lat},${b.lng}`;
+    const embed = `https://maps.google.com/maps?q=${encodeURIComponent(coords)}&z=16&output=embed`;
+    return `<article class="location-card reveal" id="co-so-${i + 1}">
+      <div class="location-card-heading">
+        <span class="location-number">0${i + 1}</span>
+        <div class="location-card-info"><span class="eyebrow">Địa chỉ ${esc(b.name.toLowerCase())}</span>
+          <h3>${esc(b.shortName)}</h3><p>${ic('pin')} ${esc(b.address)}</p></div>
+        <a class="btn btn-outline btn-sm location-directions" href="${esc(b.mapsUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Mở Google Maps ${esc(b.name)}">Chỉ đường ↗</a>
+      </div>
+      <div class="location-map"><iframe src="${esc(embed)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Ghim Google Maps ${esc(b.name)} tại ${esc(b.address)}" allowfullscreen></iframe></div>
+      <a class="location-mobile-link" href="${esc(b.mapsUrl)}" target="_blank" rel="noopener noreferrer">Mở vị trí trên Google Maps ↗</a>
+    </article>`;
+  }).join('');
 
   document.getElementById('live1').innerHTML = liveBadge();
   document.getElementById('live2').innerHTML = liveBadge();
