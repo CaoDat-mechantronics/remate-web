@@ -37,11 +37,11 @@ window.SITE = {
   bankName: 'Agribank',
 
   // ⚠️ THAY bằng link fanpage Facebook thật của công ty
-  facebook: 'https://www.facebook.com/',
+  facebook: 'https://www.facebook.com/share/1GyrXUiFRZ/?mibextid=wwXIfr',
   zalo: 'https://zalo.me/0326752517',
   // TODO: chưa có link tài khoản TikTok chính thức; thay địa chỉ này bằng URL kênh ReMate.
   // Để chuỗi rỗng '' nếu muốn tạm ẩn nút TikTok.
-  tiktok: 'https://www.tiktok.com/',
+  tiktok: 'https://www.tiktok.com/@dattotbung?_r=1&_t=ZS-9Aw6fqmqA7w',
   // Bản đồ mặc định dự phòng (cơ sở 1).
   mapEmbed: 'https://maps.google.com/maps?q=21.6896928%2C105.8543588&z=16&output=embed',
 
