@@ -31,6 +31,7 @@
       <button class="tab active" data-type="products">📦 Sản phẩm</button>
       <button class="tab" data-type="projects">🏗️ Dự án</button>
       <button class="tab" data-type="partners">🤝 Đối tác</button>
+      <button class="tab" data-type="services">🛠️ Dịch vụ</button>
     </div>
 
     <div class="a-grid">
@@ -43,6 +44,11 @@
           <div class="row2">
             <label><span id="categoryLabel">Danh mục / Lĩnh vực</span><input name="category" list="catList" placeholder="Chọn hoặc nhập mới"></label>
             <label class="only-p">Giá<input name="price" placeholder="VD: 45.000.000 đ hoặc Liên hệ"></label>
+            <label class="only-service">Nhóm dịch vụ <span class="req">*</span>
+              <select name="serviceGroup" id="serviceGroup" aria-label="Chọn nhóm dịch vụ" disabled>
+                <option value="">-- Chọn nhóm dịch vụ --</option>
+              </select>
+            </label>
             <label class="only-j">Thời gian thực hiện<input name="time" placeholder="VD: 03/2026 – 05/2026"></label>
           </div>
           <datalist id="catList"></datalist>
@@ -58,6 +64,12 @@
           <datalist id="condList"><option>Mới 100%</option><option>Đã qua sử dụng – còn tốt</option><option>Đã qua sử dụng – đã bảo dưỡng</option><option>Thanh lý theo lô</option></datalist>
           <div class="specs-h"><b>Thông số kỹ thuật</b><button type="button" class="btn btn-sm btn-light" id="addSpec">+ Thêm dòng</button></div>
           <div id="specs"></div>
+        </fieldset>
+
+        <fieldset class="only-service"><legend>2. Thuộc tính dịch vụ</legend>
+          <p class="partner-admin-note">Tự thêm các thông tin phù hợp như: Loại thiết bị, Hạng mục bảo trì, Phạm vi công việc, Thời gian triển khai… Tối đa 30 dòng.</p>
+          <div class="specs-h"><b>Thuộc tính tùy chỉnh</b><button type="button" class="btn btn-sm btn-light" id="addServiceSpec">+ Thêm thuộc tính</button></div>
+          <div id="serviceSpecs"></div>
         </fieldset>
 
         <fieldset class="only-partner"><legend>2. Thông tin đối tác</legend>
@@ -82,7 +94,7 @@
           <div class="imgs" id="imgs"></div>
         </fieldset>
 
-        <fieldset class="only-post"><legend>4. Nội dung chi tiết</legend>
+        <fieldset class="only-post"><legend>4. <span id="contentLabel">Nội dung chi tiết</span></legend>
           <textarea name="content" rows="7" placeholder="Mô tả chi tiết, ưu điểm, điều kiện bảo hành, quy trình thực hiện…"></textarea>
         </fieldset>
 

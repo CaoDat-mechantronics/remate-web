@@ -143,3 +143,16 @@ Dữ liệu lưu trong `data/partners.json` và `public/uploads/`. **Không mấ
 - `public/san-pham.html` vẫn hoạt động như cũ nhưng không nằm trên thanh menu hoặc danh mục footer. Khách có thể mở trang bằng các nút **Sản phẩm kinh doanh** và **Tất cả sản phẩm** trên trang chủ (URL trực tiếp vẫn hoạt động).
 - `public/du-an.html` và quản trị dự án được giữ nguyên.
 - TikTok được thêm vào cụm nút nổi (và footer, trang Liên hệ, trang Chi tiết). **Hãy sửa `tiktok` trong `public/js/config.js` thành URL kênh TikTok chính thức của ReMate**; mặc định đang dẫn đến `https://www.tiktok.com/` vì chưa có đường dẫn cụ thể. Đặt `tiktok: ''` để ẩn nút khi chưa có kênh.
+
+
+## Nâng cấp: Quản lý Dịch vụ (từ bản source `remate-website(1).zip`)
+
+- `admin.html` có tab **🛠️ Dịch vụ**, bên cạnh Sản phẩm, Dự án, Đối tác.
+- Bài dịch vụ gồm: tên (bắt buộc), **nhóm dịch vụ** (chọn trong 3 nhóm), mô tả ngắn (bắt buộc), mô tả chi tiết, hình ảnh tối đa 12, tối đa 30 thuộc tính tùy chỉnh (tương tự thông số sản phẩm), Nổi bật, Hiển thị công khai.
+- Ba nhóm cố định được định nghĩa trong `SITE.serviceGroups` ở `public/js/config.js`; backend dùng danh sách cùng tên trong `SERVICE_GROUPS` tại `server.py`. Nếu thay đổi tên nhóm, **phải sửa đồng bộ ở hai file**.
+- API mới: `GET /api/services` (khách chỉ thấy bài công khai), `GET /api/services/{id-hoặc-slug}`, `POST /api/services`, `PUT /api/services/{id}`, `DELETE /api/services/{id}` (các thao tác ghi cần token admin).
+- Dữ liệu nằm trong `data/services.json` và ảnh đăng từ Admin nằm trong `public/uploads/`. `data/services.json` ban đầu là mảng rỗng (`[]`).
+- Trang `public/dich-vu.html` vẫn giữ nguyên giới thiệu ba nhóm và thêm phần **Các dịch vụ ReMate cung cấp** bên dưới: tìm kiếm theo tên/mô tả/thuộc tính, lọc nhóm, chia danh sách thành từng nhóm, thẻ dịch vụ và cập nhật realtime SSE.
+- Khách bấm vào thẻ để mở `chi-tiet.html?type=services&id=<slug>` và xem thuộc tính cùng hình ảnh.
+- **Khi nâng cấp website có dữ liệu thật**: Sao lưu `data/` và `public/uploads/`, chỉ chép các file trong gói cập nhật thay vì ghi đè toàn bộ; nếu đã có `data/services.json` thì không thay thế bằng file mẫu rỗng.
+- Nếu dùng Render Free với lưu trữ JSON/ảnh hiện tại, nội dung mới có thể mất khi máy ngủ hoặc deploy lại. Cần ổ lưu trữ bền vững để vận hành lâu dài.

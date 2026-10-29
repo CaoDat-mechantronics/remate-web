@@ -52,6 +52,12 @@ window.SITE = {
     { icon: 'gear', title: 'Thiết kế, gia công, chế tạo máy theo yêu cầu' },
     { icon: 'leaf', title: 'Đo đạc, tư vấn, triển khai các giải pháp tiết kiệm năng lượng' }
   ],
+  // Ba nhóm dịch vụ cố định, đồng bộ giữa Admin và trang Dịch vụ.
+  serviceGroups: [
+    { id: 'bao-tri', icon: 'wrench', title: 'Kiểm tra, bảo trì thiết bị tại nhà máy', description: 'Kiểm tra hiện trạng, bảo trì, hỗ trợ vận hành thiết bị tại nhà máy.' },
+    { id: 'che-tao', icon: 'gear', title: 'Thiết kế, gia công, chế tạo máy theo yêu cầu', description: 'Tư vấn, thiết kế và gia công theo yêu cầu kỹ thuật thực tế.' },
+    { id: 'nang-luong', icon: 'leaf', title: 'Đo đạc, tư vấn, triển khai các giải pháp tiết kiệm năng lượng', description: 'Đo đạc, đánh giá và hỗ trợ triển khai phương án tối ưu năng lượng.' }
+  ],
   // Danh sách đối tác hiện được quản lý trực tiếp từ trang admin (data/partners.json).
   // Nếu trước đây đã thêm đối tác thủ công, vẫn có thể giữ ở mảng sau (tương thích phiên bản cũ).
   partners: [],

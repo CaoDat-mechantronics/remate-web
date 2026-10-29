@@ -20,13 +20,15 @@
 <script src="js/config.js"></script>
 <script>
   const P = new URLSearchParams(location.search);
-  document.body.dataset.page = P.get('type') === 'projects' ? 'projects' : 'products';
+  document.body.dataset.page = P.get('type') === 'services' ? 'services' : P.get('type') === 'projects' ? 'projects' : 'products';
 </script>
 <script src="js/common.js"></script>
 <script>
 (async function () {
-  const type = P.get('type') === 'projects' ? 'projects' : 'products', id = P.get('id');
-  const isP = type === 'products', label = isP ? 'Sản phẩm' : 'Dự án', listPage = isP ? 'san-pham.html' : 'du-an.html';
+  const type = P.get('type') === 'services' ? 'services' : P.get('type') === 'projects' ? 'projects' : 'products', id = P.get('id');
+  const isP = type === 'products', isS = type === 'services';
+  const label = isP ? 'Sản phẩm' : isS ? 'Dịch vụ' : 'Dự án';
+  const listPage = isP ? 'san-pham.html' : isS ? 'dich-vu.html#dich-vu-da-dang' : 'du-an.html';
   const box = document.getElementById('detail');
   async function load() {
     let x;
@@ -38,6 +40,7 @@
     const imgs = x.images && x.images.length ? x.images : ['img/logo-icon.png'];
     const rows = isP
       ? [['Danh mục', x.category], ['Tình trạng', x.condition], ['Số lượng', x.quantity], ['Xuất xứ / Nguồn', x.origin], ...(x.specs || []).map((s) => [s.key, s.value])]
+      : isS ? [['Nhóm dịch vụ', x.category], ...(x.specs || []).map((s) => [s.key, s.value])]
       : [['Lĩnh vực', x.category], ['Khách hàng', x.client], ['Địa điểm', x.location], ['Thời gian', x.time], ['Phạm vi công việc', x.scope], ['Kết quả', x.result]];
     box.innerHTML = `
       <div class="detail">
@@ -58,7 +61,7 @@
           <p style="color:var(--muted);font-size:13px;margin-top:14px">Cập nhật: ${fmtDate(x.updatedAt)}</p>
         </div>
       </div>
-      ${x.content ? `<div class="content"><h2>${isP ? 'Mô tả chi tiết' : 'Nội dung dự án'}</h2>${esc(x.content)}</div>` : ''}`;
+      ${x.content ? `<div class="content"><h2>${isP ? 'Mô tả chi tiết' : isS ? 'Mô tả chi tiết dịch vụ' : 'Nội dung dự án'}</h2>${esc(x.content)}</div>` : ''}`;
     const main = document.getElementById('mainImg');
     main.parentElement.addEventListener('click', () => lightbox(main.src));
     box.querySelectorAll('.thumbs img').forEach((t) => t.addEventListener('click', () => {
@@ -66,7 +69,7 @@
     }));
     const all = await api(type).catch(() => []);
     const rel = all.filter((o) => o.id !== x.id).sort((a, b) => (b.category === x.category) - (a.category === x.category)).slice(0, 3);
-    document.getElementById('relTitle').textContent = isP ? 'Sản phẩm khác' : 'Dự án khác';
+    document.getElementById('relTitle').textContent = isP ? 'Sản phẩm khác' : isS ? 'Dịch vụ liên quan' : 'Dự án khác';
     document.getElementById('relatedSec').style.display = rel.length ? '' : 'none';
     document.getElementById('related').innerHTML = rel.map((o) => cardHTML(type, o)).join('');
     reveal();

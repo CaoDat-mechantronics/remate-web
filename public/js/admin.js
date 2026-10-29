@@ -5,6 +5,9 @@
   const F = form.elements;
   let token = sessionStorage.getItem('remate_token') || '';
   let type = 'products', editingId = null, images = [], items = [];
+  const serviceGroups = (window.SITE && SITE.serviceGroups) || [];
+  const serviceGroup = $('#serviceGroup');
+  serviceGroup.innerHTML = '<option value="">-- Chọn nhóm dịch vụ --</option>' + serviceGroups.map((g) => `<option value="${esc(g.title)}">${esc(g.title)}</option>`).join('');
 
   const redirectToLogin = () => {
     sessionStorage.removeItem('remate_token');
@@ -43,21 +46,28 @@
   function switchType(t) {
     type = t;
     document.body.classList.toggle('partner-mode', t === 'partners');
+    document.body.classList.toggle('service-mode', t === 'services');
     document.querySelectorAll('.tab').forEach((x) => x.classList.toggle('active', x.dataset.type === t));
     document.querySelectorAll('.only-p').forEach((el) => (el.style.display = t === 'products' ? '' : 'none'));
     document.querySelectorAll('.only-j').forEach((el) => (el.style.display = t === 'projects' ? '' : 'none'));
+    document.querySelectorAll('.only-service').forEach((el) => (el.style.display = t === 'services' ? '' : 'none'));
+    serviceGroup.disabled = t !== 'services';
+    serviceGroup.required = t === 'services';
+    F.category.disabled = t === 'services';
     document.querySelectorAll('.only-partner').forEach((el) => (el.style.display = t === 'partners' ? '' : 'none'));
     document.querySelectorAll('.only-post').forEach((el) => (el.style.display = t !== 'partners' ? '' : 'none'));
-    $('#listTitle').textContent = t === 'products' ? 'Danh sách sản phẩm' : t === 'projects' ? 'Danh sách dự án' : 'Danh sách đối tác';
-    $('#mainTitleLabel').textContent = t === 'partners' ? 'Tên doanh nghiệp / đối tác' : 'Tên';
+    $('#listTitle').textContent = ({products:'Danh sách sản phẩm', projects:'Danh sách dự án', partners:'Danh sách đối tác', services:'Danh sách dịch vụ'})[t];
+    $('#mainTitleLabel').textContent = t === 'partners' ? 'Tên doanh nghiệp / đối tác' : t === 'services' ? 'Tên dịch vụ' : 'Tên';
     $('#categoryLabel').textContent = t === 'partners' ? 'Lĩnh vực hợp tác' : 'Danh mục / Lĩnh vực';
-    $('#summaryLabel').textContent = t === 'partners' ? 'Giới thiệu ngắn về đối tác (hiển thị công khai)' : 'Mô tả ngắn (hiển thị trên thẻ)';
+    F.category.closest('label').style.display = t === 'services' ? 'none' : '';
+    $('#summaryLabel').textContent = t === 'partners' ? 'Giới thiệu ngắn về đối tác (hiển thị công khai)' : t === 'services' ? 'Mô tả ngắn dịch vụ (hiển thị trên danh sách)' : 'Mô tả ngắn (hiển thị trên thẻ)';
+    $('#contentLabel').textContent = t === 'services' ? 'Mô tả chi tiết dịch vụ' : 'Nội dung chi tiết';
     $('#mediaTitle').textContent = t === 'partners' ? 'Logo đối tác' : 'Hình ảnh';
     $('#mediaHint').textContent = t === 'partners' ? '(1 logo, PNG/JPG/WebP; nên dùng ảnh vuông hoặc ngang, nền trong suốt)' : '(ảnh đầu tiên là ảnh đại diện – tối đa 12 ảnh)';
-    $('#featuredLabel').textContent = t === 'partners' ? 'Ưu tiên giới thiệu trên trang chủ' : 'Nổi bật (ưu tiên trang chủ)';
+    $('#featuredLabel').textContent = t === 'partners' ? 'Ưu tiên giới thiệu trên trang chủ' : t === 'services' ? 'Nổi bật (ưu tiên trong nhóm dịch vụ)' : 'Nổi bật (ưu tiên trang chủ)';
     $('#fileIn').multiple = t !== 'partners';
-    F.title.placeholder = t === 'partners' ? 'VD: Công ty TNHH ABC' : t === 'projects' ? 'VD: Lắp đặt hệ thống sản xuất' : 'VD: Máy nén khí trục vít 37kW đã qua sử dụng';
-    F.summary.placeholder = t === 'partners' ? 'Giới thiệu ngắn về năng lực và mối quan hệ hợp tác…' : '1–2 câu tóm tắt';
+    F.title.placeholder = t === 'partners' ? 'VD: Công ty TNHH ABC' : t === 'projects' ? 'VD: Lắp đặt hệ thống sản xuất' : t === 'services' ? 'VD: Bảo trì định kỳ hệ thống khí nén' : 'VD: Máy nén khí trục vít 37kW đã qua sử dụng';
+    F.summary.placeholder = t === 'partners' ? 'Giới thiệu ngắn về năng lực và mối quan hệ hợp tác…' : t === 'services' ? 'Giới thiệu dịch vụ trong 1–2 câu…' : '1–2 câu tóm tắt';
     resetForm(); loadList();
   }
 
@@ -102,29 +112,38 @@
   const FIELDS = ['title', 'category', 'summary', 'content', 'website', 'price', 'condition', 'quantity', 'origin', 'client', 'location', 'time', 'scope', 'result'];
   function resetForm() {
     editingId = null; images = []; form.reset(); F.published.checked = true;
-    $('#specs').innerHTML = ''; if (type === 'products') { addSpec(); addSpec(); }
+    $('#specs').innerHTML = ''; $('#serviceSpecs').innerHTML = '';
+    serviceGroup.value = '';
+    if (type === 'products') { addSpec(); addSpec(); }
+    if (type === 'services') { addSpec('', '', '#serviceSpecs'); }
     renderImgs(); renderList();
-    $('#formTitle').textContent = type === 'products' ? 'Đăng sản phẩm mới' : type === 'projects' ? 'Đăng dự án mới' : 'Thêm đối tác mới';
-    $('#saveBtn').textContent = type === 'partners' ? '💾 Thêm đối tác' : '💾 Đăng bài';
+    $('#formTitle').textContent = ({products:'Đăng sản phẩm mới', projects:'Đăng dự án mới', partners:'Thêm đối tác mới', services:'Thêm dịch vụ mới'})[type];
+    $('#saveBtn').textContent = type === 'partners' ? '💾 Thêm đối tác' : type === 'services' ? '💾 Đăng dịch vụ' : '💾 Đăng bài';
   }
   function fillForm(x) {
     resetForm(); editingId = x.id;
     FIELDS.forEach((f) => { if (F[f]) F[f].value = x[f] || ''; });
+    if (type === 'services') serviceGroup.value = x.category || '';
     F.featured.checked = !!x.featured; F.published.checked = x.published !== false;
     images = [...(x.images || [])]; renderImgs();
-    $('#specs').innerHTML = ''; (x.specs || []).forEach((s) => addSpec(s.key, s.value)); if (type === 'products' && !(x.specs || []).length) addSpec();
+    $('#specs').innerHTML = ''; $('#serviceSpecs').innerHTML = '';
+    (x.specs || []).forEach((s) => addSpec(s.key, s.value, type === 'services' ? '#serviceSpecs' : '#specs'));
+    if (type === 'products' && !(x.specs || []).length) addSpec();
+    if (type === 'services' && !(x.specs || []).length) addSpec('', '', '#serviceSpecs');
     $('#formTitle').textContent = 'Sửa: ' + x.title; $('#saveBtn').textContent = '💾 Lưu thay đổi';
     renderList(); form.scrollIntoView({ behavior: 'smooth' });
   }
   $('#resetBtn').addEventListener('click', resetForm);
 
-  function addSpec(k = '', v = '') {
+  function addSpec(k = '', v = '', target = '#specs') {
+    if ($(target).querySelectorAll('.spec').length >= 30) { toast('Tối đa 30 thuộc tính'); return; }
     const d = document.createElement('div'); d.className = 'spec';
     d.innerHTML = `<input placeholder="Thông số (VD: Công suất)" value="${esc(k)}"><input placeholder="Giá trị (VD: 37 kW)" value="${esc(v)}"><button type="button" title="Xóa">✕</button>`;
     d.querySelector('button').onclick = () => d.remove();
-    $('#specs').appendChild(d);
+    $(target).appendChild(d);
   }
   $('#addSpec').addEventListener('click', () => addSpec());
+  $('#addServiceSpec').addEventListener('click', () => addSpec('', '', '#serviceSpecs'));
 
   /* ---------- Ảnh: nén phía trình duyệt ---------- */
   function compress(file) {
@@ -174,7 +193,8 @@
     const d = {};
     FIELDS.forEach((f) => { if (F[f]) d[f] = F[f].value.trim(); });
     d.featured = F.featured.checked; d.published = F.published.checked; d.images = images;
-    d.specs = [...document.querySelectorAll('#specs .spec')].map((r) => ({ key: r.children[0].value.trim(), value: r.children[1].value.trim() })).filter((s) => s.key);
+    if (type === 'services') d.category = serviceGroup.value;
+    d.specs = [...document.querySelectorAll(type === 'services' ? '#serviceSpecs .spec' : '#specs .spec')].map((r) => ({ key: r.children[0].value.trim(), value: r.children[1].value.trim() })).filter((s) => s.key).slice(0, 30);
     return d;
   }
   form.addEventListener('submit', async (e) => {

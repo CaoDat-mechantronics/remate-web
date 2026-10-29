@@ -464,3 +464,33 @@ button,input,select,textarea{font:inherit}
  .rm-services-photo-label{left:12px;bottom:12px;padding:10px 12px}
  .rm-services-hero-stats>span:last-child{font-size:10px}
 }
+
+/* ===== Danh sách dịch vụ chi tiết – 3 nhóm / bộ lọc ===== */
+.rm-service-catalog{background:#f0f5ed;scroll-margin-top:90px}
+.rm-service-catalog-head{align-items:center}
+.rm-catalog-live{flex:none}
+.rm-service-toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.rm-service-search{width:min(100%,530px);flex:1}
+.rm-service-search input{width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:11px;background:#fff;font:inherit;color:var(--text)}
+.rm-catalog-count{font-size:13px;color:var(--g700);font-weight:800;white-space:nowrap}
+.rm-service-filters{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:28px}
+.rm-service-filter{background:#fff;color:var(--g800);padding:11px 15px;border:1px solid #cdddc9;border-radius:12px;cursor:pointer;font:inherit;font-size:13px;font-weight:700;line-height:1.5;max-width:100%;text-align:left;transition:background .2s,color .2s,border-color .2s}
+.rm-service-filter:hover,.rm-service-filter[aria-pressed="true"]{background:var(--g700);color:#fff;border-color:var(--g700)}
+.rm-service-group{margin-bottom:38px;scroll-margin-top:96px}
+.rm-service-group-head{display:flex;gap:14px;align-items:center;margin-bottom:17px;padding-bottom:14px;border-bottom:1px solid #d2dfd0}
+.rm-service-group-icon{width:48px;height:48px;flex:none;display:grid;place-items:center;border-radius:12px;background:var(--g200);color:var(--g800)}
+.rm-service-group-icon .ic{height:25px;width:25px}
+.rm-service-group-head h3{color:var(--g800);font-size:clamp(17px,2vw,22px);line-height:1.3}
+.rm-service-group-head p{color:var(--muted);font-size:13px;margin-top:3px}
+.rm-service-group-count{margin-left:auto;font-weight:800;font-size:13px;flex:none;color:var(--g700)}
+.rm-service-catalog .card .thumb{aspect-ratio:16/10}
+.rm-service-catalog .card .body{min-height:160px}
+.rm-service-catalog .card .tag{max-width:calc(100% - 24px);line-height:1.35;border-radius:9px}
+.service-card-label{font-weight:700;color:var(--g700)}
+.rm-sr-only{position:absolute;width:1px;height:1px;clip:rect(0,0,0,0);overflow:hidden;white-space:nowrap}
+@media(max-width:600px){
+ .rm-service-filters{display:grid;grid-template-columns:1fr 1fr}
+ .rm-service-filter:first-child{grid-column:1/-1;text-align:center}
+ .rm-service-group-head{align-items:flex-start}
+ .rm-service-group-count{white-space:nowrap}
+}

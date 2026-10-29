@@ -5,7 +5,7 @@ Admin:  http://localhost:3000/admin.html  (ADMIN_USER / ADMIN_PASSWORD qua biế
 
 Chức năng:
   - Phục vụ file tĩnh trong ./public
-  - REST API cho sản phẩm (products), dự án (projects) và đối tác (partners), lưu vào ./data/*.json
+  - REST API cho sản phẩm (products), dự án (projects), đối tác (partners) và dịch vụ (services), lưu vào ./data/*.json
   - Upload ảnh (dataURL base64) → lưu vào ./public/uploads
   - Cập nhật thời gian thực bằng Server-Sent Events (SSE): GET /api/stream
 """
@@ -34,7 +34,12 @@ ROOT = Path(__file__).resolve().parent
 PUBLIC_DIR = ROOT / "public"
 DATA_DIR = Path(os.environ.get("DATA_DIR", ROOT / "data")).resolve()
 UPLOAD_DIR = Path(os.environ.get("UPLOAD_DIR", PUBLIC_DIR / "uploads")).resolve()
-TYPES = ("products", "projects", "partners")
+TYPES = ("products", "projects", "partners", "services")
+SERVICE_GROUPS = (
+    "Kiểm tra, bảo trì thiết bị tại nhà máy",
+    "Thiết kế, gia công, chế tạo máy theo yêu cầu",
+    "Đo đạc, tư vấn, triển khai các giải pháp tiết kiệm năng lượng",
+)
 MAX_BODY = 25 * 1024 * 1024  # 25MB / request
 MAX_IMAGES = 12
 SESSION_SECONDS = 8 * 60 * 60
@@ -184,6 +189,13 @@ def normalize(kind, b, old=None):
             raise ApiError("Tên không được để trống")
         if not text(b.get("summary"), 500):
             raise ApiError("Vui lòng nhập mô tả ngắn về đối tác")
+    if kind == "services":
+        if not text(b.get("title"), 200):
+            raise ApiError("Vui lòng nhập tên dịch vụ")
+        if not text(b.get("summary"), 500):
+            raise ApiError("Vui lòng nhập mô tả ngắn cho dịch vụ")
+        if text(b.get("category"), 200) not in SERVICE_GROUPS:
+            raise ApiError("Dịch vụ phải thuộc một trong ba nhóm đã quy định")
     item.update({
         "title": text(b.get("title"), 200),
         "category": text(b.get("category"), 100),
@@ -208,6 +220,10 @@ def normalize(kind, b, old=None):
     elif kind == "partners":
         # Thông tin đối tác hiển thị công khai, logo là ảnh đầu tiên.
         item["website"] = website
+    elif kind == "services":
+        specs = b.get("specs") if isinstance(b.get("specs"), list) else []
+        item["specs"] = [{"key": text(s.get("key"), 100), "value": text(s.get("value"), 300)}
+                         for s in specs if isinstance(s, dict) and text(s.get("key"))][:30]
     else:
         item.update({
             "client": text(b.get("client"), 200),

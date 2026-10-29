@@ -80,6 +80,7 @@
     const href = `chi-tiet.html?type=${type}&id=${encodeURIComponent(x.slug || x.id)}`;
     const meta = type === 'products'
       ? `<span class="price">${esc(x.price || 'Liên hệ')}</span>`
+      : type === 'services' ? '<span class="service-card-label">Dịch vụ kỹ thuật</span>'
       : `<span>📅 ${esc(x.time || fmtDate(x.createdAt))}</span>`;
     return `<a class="card reveal" href="${href}">
       <div class="thumb"><img src="${esc(img)}" alt="${esc(x.title)}" loading="lazy">

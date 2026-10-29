@@ -23,7 +23,7 @@
         <h1>Giải pháp phù hợp cho <span>từng nhu cầu sản xuất.</span></h1>
         <p>Từ kiểm tra, bảo trì thiết bị đến thiết kế, chế tạo máy và các giải pháp tiết kiệm năng lượng, ReMate hướng tới phối hợp cùng doanh nghiệp để khai thác hiệu quả nguồn lực hiện có.</p>
         <div class="rm-services-actions">
-          <a class="btn btn-primary" href="#danh-sach-dich-vu">Khám phá dịch vụ <span aria-hidden="true">→</span></a>
+          <a class="btn btn-primary" href="#dich-vu-da-dang">Khám phá dịch vụ <span aria-hidden="true">→</span></a>
           <a class="btn btn-outline" href="#tu-van-dich-vu">Liên hệ tư vấn</a>
         </div>
         <div class="rm-services-hero-stats"><span class="rm-services-stat-num">03</span><span>NHÓM DỊCH VỤ CHÍNH<br>PHỤC VỤ DOANH NGHIỆP SẢN XUẤT</span></div>
@@ -60,6 +60,22 @@
       </article>
     </div>
   </section>
+
+  <!-- Các dịch vụ cụ thể do quản trị viên đăng, phân loại theo 3 nhóm cố định -->
+  <section class="section rm-service-catalog" id="dich-vu-da-dang" aria-labelledby="svcCatalogTitle">
+    <div class="container">
+      <div class="sec-head rm-service-catalog-head">
+        <div><span class="eyebrow">Danh mục dịch vụ</span><h2 id="svcCatalogTitle">Các dịch vụ ReMate cung cấp</h2><p>Khám phá từng dịch vụ chi tiết, lọc theo nhóm hoặc tìm kiếm nhu cầu phù hợp.</p></div>
+        <span id="svcLive" class="rm-catalog-live"></span>
+      </div>
+      <div class="rm-service-toolbar">
+        <label class="rm-service-search"><span class="rm-sr-only">Tìm kiếm dịch vụ</span><input id="svcSearch" type="search" placeholder="Tìm tên, mô tả hoặc thuộc tính dịch vụ…" autocomplete="off"></label>
+        <span id="svcCount" class="rm-catalog-count" aria-live="polite">Đang tải…</span>
+      </div>
+      <div id="svcFilters" class="rm-service-filters" role="group" aria-label="Lọc theo nhóm dịch vụ"></div>
+      <div id="svcCatalog" aria-live="polite"><div class="grid"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div></div>
+    </div>
+  </section>
   <section class="rm-services-contact" id="tu-van-dich-vu">
     <div class="container rm-services-contact-inner reveal">
       <div><span class="eyebrow">Trao đổi cùng ReMate</span><h2>Doanh nghiệp của bạn đang cần <span>giải pháp kỹ thuật?</span></h2><p>Chia sẻ nhu cầu và hiện trạng thiết bị để cùng trao đổi phương án phù hợp.</p></div>
@@ -75,5 +91,6 @@
   document.getElementById('svcCall').textContent = 'Gọi tư vấn: ' + SITE.phone;
   document.getElementById('svcZalo').href = SITE.zalo;
 </script>
+<script src="js/services.js"></script>
 </body>
 </html>
