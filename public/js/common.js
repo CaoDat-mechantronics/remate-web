@@ -32,7 +32,7 @@
     <div class="footer-grid">
       <div><div class="logo-w"><img src="img/logo-icon.png" alt=""><b>ReMate</b></div>
         <p style="font-size:14.5px">${S.fullName}<br><i>${S.slogan}</i></p>
-        <div class="socials"><a class="social fb" href="${S.facebook}" target="_blank" rel="noopener noreferrer">${ic('facebook')}Facebook</a><a class="social zl" href="${S.zalo}" target="_blank" rel="noopener noreferrer">Zalo</a>${S.tiktok ? `<a class="social tt" href="${S.tiktok}" target="_blank" rel="noopener noreferrer">${ic('tiktok')} TikTok</a>` : ''}</div></div>
+      </div>
       <div><h4>Danh mục</h4><ul>${nav.map(([h, t]) => `<li><a href="${h}">${t}</a></li>`).join('')}</ul></div>
       <div><h4>Lĩnh vực</h4><ul>${S.services.map((s) => `<li>${s.title}</li>`).join('')}</ul></div>
       <div><h4>Liên hệ</h4><ul>
