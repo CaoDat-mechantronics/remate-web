@@ -6,7 +6,7 @@
     fields.innerHTML = S.services.map((s, i) => {
       const custom = images.find(x => x.index === i && x.src);
       const symbol = custom
-        ? `<img class="rm-expertise-custom-image" src="${esc(custom.src)}" alt="Biểu tượng ${esc(s.title)}" loading="lazy">`
+        ? `<img class="rm-expertise-custom-image rm-expertise-image-backdrop" src="${esc(custom.src)}" alt="" aria-hidden="true" loading="lazy"><img class="rm-expertise-custom-image" src="${esc(custom.src)}" alt="Hình ảnh lĩnh vực ${esc(s.title)}" loading="lazy">`
         : ic(s.icon);
       return `<article class="rm-expertise-card reveal"><span class="rm-expertise-number">0${i + 1}</span>
         <div class="rm-expertise-icon ${custom ? 'has-custom-image' : ''}">${symbol}</div><h3>${esc(s.title)}</h3>
