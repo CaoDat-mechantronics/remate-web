@@ -1,2 +1,6 @@
-# Không cần cài thêm gì – server.py chỉ dùng thư viện chuẩn của Python 3.8+
-# (Pillow chỉ cần khi chạy tools/make_images.py để tạo ảnh từ ấn phẩm)
+# Install on Render: pip install -r requirements.txt
+# B2 is the default image storage provider.
+boto3>=1.28,<2
+firebase-admin>=6.5,<8
+cloudinary>=1.41,<3
+python-dotenv>=1.0,<2

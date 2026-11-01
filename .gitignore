@@ -1,5 +1,9 @@
 __pycache__/
 *.pyc
-data/*.tmp
-public/uploads/*
-!public/uploads/.gitkeep
+
+# Never commit credentials or server-only environment files
+.env
+.env.*
+!.env.example
+*service-account*.json
+*.pem

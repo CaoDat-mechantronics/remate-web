@@ -1,11 +1,33 @@
+# ReMate — Lưu dữ liệu và hình ảnh trên Backblaze B2
+
+**Bản cập nhật 2026-11-01:** Website giữ nguyên frontend và API. Mặc định
+`DATA_STORAGE=b2` và `IMAGE_STORAGE=b2`: cả **7 tệp JSON** và ảnh nội dung
+sản phẩm, album, dịch vụ đều lên **Backblaze B2 Private Bucket**.
+Chi tiết cài đặt, di chuyển dữ liệu và lưu ý an toàn xem
+[`HUONG_DAN_B2_DATA_VA_ANH.md`](HUONG_DAN_B2_DATA_VA_ANH.md).
+
+> Lưu ý: Backblaze B2 không phải cơ sở dữ liệu giao dịch. Chỉ chạy **một tiến trình
+> ghi dữ liệu** (một instance Render), không dùng nhiều worker/process cùng sửa
+> JSON. Cấu hình vòng đời B2 cần giữ phiên bản cũ đủ lâu để khôi phục khi cần.
+
+---
+
+# ReMate — Website đầy đủ, hỗ trợ B2/Local/Firebase/Cloudinary
+
+> **Bản cập nhật:** Dựa trên `remate-website_current.zip`, mặc định upload ảnh vào Backblaze B2 bằng `IMAGE_STORAGE=b2`. Có thể chuyển sang `local`, `firebase` hoặc `cloudinary` chỉ bằng biến Environment trên Render. Xem **[HUONG_DAN_STORAGE_SWITCH_B2_DEFAULT.md](HUONG_DAN_STORAGE_SWITCH_B2_DEFAULT.md)** để cấu hình và deploy. **Dữ liệu `data/*.json` vẫn nằm trên server, chưa được chuyển vào database.**
+
 # Website ReMate – Công ty Cổ phần Vật tư Tái sử dụng ReMate
 
 Website giới thiệu công ty + trang Sản phẩm + trang Dự án (cập nhật **thời gian thực**) + trang **Quản trị** để admin đăng bài theo mẫu.
-Backend viết bằng **Python 3** – chỉ dùng thư viện chuẩn, **không cần `pip install`** (Python ≥ 3.8).
+Backend viết bằng **Python 3**. Ở bản Storage Switch, cần cài các thư viện trong `requirements.txt` (boto3, Firebase Admin, Cloudinary, python-dotenv).
 
 ## 1. Chạy thử
+
+Đổi tên `.env.example` thành `.env` và nhập các giá trị thật cho `B2_BUCKET`, `B2_ENDPOINT`, `B2_KEY_ID`, `B2_APP_KEY`, `ADMIN_USER`, `ADMIN_PASSWORD`. File `.env` sẽ tự được đọc khi chạy local; các biến Environment thật trên Render được ưu tiên. Không commit `.env` lên GitHub.
+
 ```bash
 cd remate-website
+pip install -r requirements.txt
 python server.py        # Windows có thể dùng: py server.py
 ```
 - Website: http://localhost:3000
@@ -25,7 +47,7 @@ Biến môi trường khác: `HOST` (mặc định `0.0.0.0`), `DATA_DIR` (mặc
 ```
 remate-website/
 ├── server.py            # Máy chủ Python: file tĩnh + API + realtime (SSE) + lưu ảnh
-├── requirements.txt     # Trống – không có thư viện ngoài
+├── requirements.txt     # boto3, firebase-admin, cloudinary
 ├── README.md
 ├── .gitignore
 ├── tools/
@@ -90,8 +112,8 @@ Khi admin bấm **Đăng bài / Lưu**, mọi khách đang mở website sẽ th�
 ## 7. Triển khai
 - **VPS**: chạy bằng systemd + Nginx reverse proxy + HTTPS (certbot). Với Nginx cần tắt buffer cho realtime:
   `location /api/stream { proxy_pass http://127.0.0.1:3000; proxy_buffering off; proxy_read_timeout 1h; }`
-- **Render/hosting PaaS**: Start command `python server.py`. Gói miễn phí có ổ đĩa tạm → mất bài đăng/ảnh khi khởi động lại;
-  cần gói có Persistent Disk và đặt `DATA_DIR`, `UPLOAD_DIR` vào thư mục của disk.
+- **Render/hosting PaaS**: Start command `python server.py`. Gói miễn phí có ổ đĩa tạm: **bài đăng trong data/*.json vẫn có thể mất** khi khởi động lại;
+  cần database bền vững hoặc Persistent Disk cho `DATA_DIR`. Ảnh B2/Firebase/Cloudinary không phụ thuộc vào đĩa Render.
 - **Sao lưu** định kỳ `data/` và `public/uploads/`. Bắt buộc đổi mật khẩu admin và dùng HTTPS khi chạy thật.
 
 
@@ -162,3 +184,8 @@ Dữ liệu lưu trong `data/partners.json` và `public/uploads/`. **Không mấ
 Menu **Giới thiệu** trỏ đến `gioi-thieu.html`, với nội dung giới thiệu ReMate và album ảnh chuyển slide. Ảnh được quản trị trong tab **📸 Album hoạt động** tại `admin.html`, lưu riêng `data/album.json` và `public/album/`.
 
 Xem hướng dẫn chi tiết trong `HUONG_DAN_GIOI_THIEU_ALBUM.md`.
+
+
+## Biến môi trường đầy đủ
+
+Xem `.env.example` để biết toàn bộ cấu hình gồm `HOST`, `PORT`, `ADMIN_USER`, `ADMIN_PASSWORD`, `DATA_DIR`, `UPLOAD_DIR`, `ALBUM_DIR`, `EXPERTISE_DIR`, `SERVICE_COVERS_DIR`, `IMAGE_STORAGE`, nhóm B2/Firebase/Cloudinary. `IMAGE_STORAGE` chỉ thay nơi lưu **ảnh**; `DATA_DIR` vẫn chứa file JSON của nội dung website.

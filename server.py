@@ -1,12 +1,12 @@
 """
-ReMate Website Server — Python 3.8+ thuần, KHÔNG cần cài thư viện ngoài.
+ReMate Website Server — Python 3; cloud image storage requires SDKs in requirements.txt.
 Chạy:   python server.py      → http://localhost:3000
 Admin:  http://localhost:3000/admin.html  (ADMIN_USER / ADMIN_PASSWORD qua biến môi trường)
 
 Chức năng:
   - Phục vụ file tĩnh trong ./public
-  - REST API cho sản phẩm (products), dự án (projects), đối tác (partners) và dịch vụ (services), lưu vào ./data/*.json
-  - Upload ảnh (dataURL base64) → lưu vào ./public/uploads
+  - REST API cho sản phẩm/dự án/đối tác/dịch vụ, JSON lưu B2 (mặc định) hoặc local qua DATA_STORAGE
+  - Upload ảnh (dataURL base64) → B2/local/Firebase/Cloudinary theo IMAGE_STORAGE
   - Cập nhật thời gian thực bằng Server-Sent Events (SSE): GET /api/stream
 """
 import base64
@@ -24,6 +24,18 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
+from dotenv import load_dotenv
+
+# Load local .env before importing image_storage (it reads IMAGE_STORAGE at import time).
+# Existing OS/Render environment variables always take precedence over .env.
+load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env", override=False)
+
+from image_storage import (
+    IMAGE_STORAGE, LOCAL_FOLDERS, ImageStorageError, delete_image, signed_image_url, store_image
+)
+from data_storage import (DATA_STORAGE, DataStorageError, initialize as initialize_data,
+                          read_all, write_all)
+
 # ---------------- Cấu hình ----------------
 HOST = os.environ.get("HOST", "0.0.0.0")
 PORT = int(os.environ.get("PORT", "3000"))
@@ -32,11 +44,10 @@ ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "remate@2026")  # ĐỔI khi t
 
 ROOT = Path(__file__).resolve().parent
 PUBLIC_DIR = ROOT / "public"
-DATA_DIR = Path(os.environ.get("DATA_DIR", ROOT / "data")).resolve()
-UPLOAD_DIR = Path(os.environ.get("UPLOAD_DIR", PUBLIC_DIR / "uploads")).resolve()
-ALBUM_DIR = Path(os.environ.get("ALBUM_DIR", PUBLIC_DIR / "album")).resolve()
-EXPERTISE_DIR = Path(os.environ.get("EXPERTISE_DIR", PUBLIC_DIR / "expertise")).resolve()
-SERVICE_COVERS_DIR = Path(os.environ.get("SERVICE_COVERS_DIR", PUBLIC_DIR / "service-covers")).resolve()
+UPLOAD_DIR = LOCAL_FOLDERS["uploads"]
+ALBUM_DIR = LOCAL_FOLDERS["album"]
+EXPERTISE_DIR = LOCAL_FOLDERS["expertise"]
+SERVICE_COVERS_DIR = LOCAL_FOLDERS["service-covers"]
 MAX_SERVICE_COVER_BYTES = 6 * 1024 * 1024  # 6 MiB per image
 MAX_EXPERTISE_IMAGE_BYTES = 5 * 1024 * 1024  # Mỗi ô dùng một ảnh ≤ 5 MiB
 MAX_ALBUM_IMAGE_BYTES = 8 * 1024 * 1024  # 8 MiB/ảnh, không giới hạn tổng số ảnh
@@ -52,7 +63,6 @@ MAX_BODY = 25 * 1024 * 1024  # 25MB / request
 MAX_IMAGES = 12
 SESSION_SECONDS = 8 * 60 * 60
 
-DATA_DIR.mkdir(parents=True, exist_ok=True)
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 ALBUM_DIR.mkdir(parents=True, exist_ok=True)
 EXPERTISE_DIR.mkdir(parents=True, exist_ok=True)
@@ -72,25 +82,10 @@ class ApiError(Exception):
         self.status = status
 
 
-# ---------------- Lưu trữ JSON (khóa ghi để an toàn đa luồng) ----------------
+# ---------------- JSON data: B2 by default, local as an optional fallback ----------------
+# One lock protects mutations across HTTP threads in this ONE Python process.
+# Do not run multiple processes or Render replicas writing the same JSON objects.
 _data_lock = threading.Lock()
-
-
-def data_file(kind):
-    return DATA_DIR / f"{kind}.json"
-
-
-def read_all(kind):
-    try:
-        return json.loads(data_file(kind).read_text(encoding="utf-8"))
-    except (FileNotFoundError, json.JSONDecodeError):
-        return []
-
-
-def write_all(kind, items):
-    tmp = data_file(kind).with_suffix(".json.tmp")
-    tmp.write_text(json.dumps(items, ensure_ascii=False, indent=2), encoding="utf-8")
-    os.replace(tmp, data_file(kind))  # ghi nguyên tử
 
 
 # ---------------- Phiên đăng nhập ----------------
@@ -152,36 +147,54 @@ DATAURL_RE = re.compile(r"^data:image/(png|jpe?g|webp|gif);base64,(.+)$", re.I |
 
 
 def save_images(images):
-    """Ảnh: giữ nguyên URL có sẵn (/uploads/..., /img/..., http...) hoặc lưu dataURL base64 thành file."""
+    """Giữ URL cũ, lưu ảnh dataURL mới tại provider đang chọn."""
     if not isinstance(images, list):
         return []
     result = []
-    for img in images[:MAX_IMAGES]:
-        img = str(img or "").strip()
-        m = DATAURL_RE.match(img)
-        if not m:
-            if img:
-                result.append(img)
-            continue
-        ext = m.group(1).lower().replace("jpeg", "jpg")
-        name = f"{int(time.time() * 1000)}-{secrets.token_hex(4)}.{ext}"
-        try:
-            (UPLOAD_DIR / name).write_bytes(base64.b64decode(m.group(2)))
-        except (ValueError, OSError):
-            raise ApiError("Ảnh không hợp lệ")
-        result.append(f"/uploads/{name}")
-    return result
+    created = []
+    try:
+        for img in images[:MAX_IMAGES]:
+            img = str(img or "").strip()
+            m = DATAURL_RE.match(img)
+            if not m:
+                if img:
+                    result.append(img)
+                continue
+            ext = m.group(1).lower().replace("jpeg", "jpg")
+            try:
+                binary = base64.b64decode(m.group(2), validate=True)
+            except (ValueError, base64.binascii.Error):
+                raise ApiError("Ảnh không hợp lệ")
+            if not binary or len(binary) > 8 * 1024 * 1024:
+                raise ApiError("Mỗi ảnh phải có dữ liệu và không vượt quá 8 MiB", 413)
+            if not image_signature_ok(binary, ext):
+                raise ApiError("Định dạng file ảnh không khớp nội dung")
+            try:
+                new_src = store_image("uploads", binary, ext)
+            except ImageStorageError as exc:
+                raise ApiError(str(exc), 502) from exc
+            created.append(new_src)
+            result.append(new_src)
+        return result
+    except Exception:
+        # Nếu ảnh thứ N lỗi thì xóa các ảnh mới được lưu trong cùng lần upload.
+        for src in created:
+            delete_image(src, "uploads")
+        raise
 
 
 def delete_uploads(paths):
     for p in paths or []:
-        if isinstance(p, str) and p.startswith("/uploads/"):
-            f = (UPLOAD_DIR / p[len("/uploads/"):]).resolve()
-            if f.parent == UPLOAD_DIR:
-                try:
-                    f.unlink()
-                except OSError:
-                    pass
+        delete_image(p, "uploads")
+
+
+def image_signature_ok(binary, ext):
+    return (
+        (ext == "jpg" and binary.startswith(b"\xff\xd8\xff")) or
+        (ext == "png" and binary.startswith(b"\x89PNG\r\n\x1a\n")) or
+        (ext == "webp" and binary.startswith(b"RIFF") and binary[8:12] == b"WEBP") or
+        (ext == "gif" and binary[:6] in (b"GIF87a", b"GIF89a"))
+    )
 
 
 def normalize(kind, b, old=None):
@@ -282,23 +295,14 @@ def store_album_image(dataurl):
     )
     if not sig_ok:
         raise ApiError("Định dạng file ảnh không khớp với dữ liệu")
-    filename = f"{int(time.time()*1000)}-{secrets.token_hex(8)}.{ext}"
-    (ALBUM_DIR / filename).write_bytes(binary)
-    return "/album/" + filename
+    try:
+        return store_image("album", binary, ext)
+    except ImageStorageError as exc:
+        raise ApiError(str(exc), 502) from exc
 
 
 def delete_album_image(src):
-    if not isinstance(src, str) or not src.startswith("/album/"):
-        return
-    name = src[len("/album/"):]
-    if not name or name != Path(name).name:
-        return
-    path = (ALBUM_DIR / name).resolve()
-    if path.parent == ALBUM_DIR:
-        try:
-            path.unlink(missing_ok=True)
-        except OSError:
-            pass
+    delete_image(src, "album")
 
 # ---------------- Ảnh biểu tượng 4 lĩnh vực trên trang Giới thiệu ----------------
 def store_expertise_image(dataurl):
@@ -324,23 +328,14 @@ def store_expertise_image(dataurl):
              (ext == "gif" and binary[:6] in (b"GIF87a", b"GIF89a")))
     if not valid:
         raise ApiError("Loại file không khớp nội dung")
-    filename = f"{int(time.time()*1000)}-{secrets.token_hex(8)}.{ext}"
-    (EXPERTISE_DIR / filename).write_bytes(binary)
-    return "/expertise/" + filename
+    try:
+        return store_image("expertise", binary, ext)
+    except ImageStorageError as exc:
+        raise ApiError(str(exc), 502) from exc
 
 
 def delete_expertise_image(src):
-    if not isinstance(src, str) or not src.startswith("/expertise/"):
-        return
-    name = src[len("/expertise/"):]
-    if not name or name != Path(name).name:
-        return
-    file = (EXPERTISE_DIR / name).resolve()
-    if file.parent == EXPERTISE_DIR:
-        try:
-            file.unlink(missing_ok=True)
-        except OSError:
-            pass
+    delete_image(src, "expertise")
 
 
 def expertise_items():
@@ -377,23 +372,14 @@ def store_service_cover(dataurl):
              (ext == "gif" and binary[:6] in (b"GIF87a", b"GIF89a")))
     if not valid:
         raise ApiError("Định dạng file không khớp nội dung")
-    filename = f"{int(time.time()*1000)}-{secrets.token_hex(8)}.{ext}"
-    (SERVICE_COVERS_DIR / filename).write_bytes(binary)
-    return "/service-covers/" + filename
+    try:
+        return store_image("service-covers", binary, ext)
+    except ImageStorageError as exc:
+        raise ApiError(str(exc), 502) from exc
 
 
 def delete_service_cover(src):
-    if not isinstance(src, str) or not src.startswith("/service-covers/"):
-        return
-    name = src[len("/service-covers/"):]
-    if not name or name != Path(name).name:
-        return
-    file = (SERVICE_COVERS_DIR / name).resolve()
-    if file.parent == SERVICE_COVERS_DIR:
-        try:
-            file.unlink(missing_ok=True)
-        except OSError:
-            pass
+    delete_image(src, "service-covers")
 
 
 def service_cover_items():
@@ -472,6 +458,9 @@ class Handler(BaseHTTPRequestHandler):
             return self.static(path)
         except ApiError as e:
             self.send_json(e.status, {"error": str(e)})
+        except DataStorageError as e:
+            self.log_error("Data storage failure: %s", e)
+            self.send_json(503, {"error": str(e)})
         except (BrokenPipeError, ConnectionResetError):
             pass
         except Exception as e:  # lỗi không lường trước
@@ -649,7 +638,13 @@ class Handler(BaseHTTPRequestHandler):
                 it["slug"] = f"{slugify(it['title'])}-{it['id'][:4]}"
                 it["createdAt"] = it["updatedAt"] = now_iso()
                 items.append(it)
-                write_all(kind, items)
+                try:
+                    write_all(kind, items)
+                except Exception:
+                    # New uploaded images are not yet referenced by stored JSON.
+                    originals = set(x for x in (body.get("images") or []) if isinstance(x, str))
+                    delete_uploads([p for p in it.get("images", []) if p not in originals])
+                    raise
                 action, status = "create", 201
             elif method == "PUT" and item_id:
                 idx = next((i for i, x in enumerate(items) if x.get("id") == item_id), -1)
@@ -659,7 +654,12 @@ class Handler(BaseHTTPRequestHandler):
                 it = normalize(kind, body, items[idx])
                 it["updatedAt"] = now_iso()
                 items[idx] = it
-                write_all(kind, items)
+                try:
+                    write_all(kind, items)
+                except Exception:
+                    originals = set(x for x in (body.get("images") or []) if isinstance(x, str))
+                    delete_uploads([p for p in it.get("images", []) if p not in originals and p not in old_imgs])
+                    raise
                 delete_uploads([p for p in old_imgs if p not in it["images"]])  # ảnh bị gỡ
                 action, status = "update", 200
             elif method == "DELETE" and item_id:
@@ -709,14 +709,28 @@ class Handler(BaseHTTPRequestHandler):
         p = unquote(path)
         if p == "/":
             p = "/index.html"
+        if p.startswith("/media/"):
+            try:
+                signed = signed_image_url(p)
+            except ImageStorageError as exc:
+                raise ApiError(str(exc), 502) from exc
+            if not signed:
+                raise ApiError("Không tìm thấy ảnh", 404)
+            self.send_response(302)
+            self.send_header("Location", signed)
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Referrer-Policy", "no-referrer")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
         if p.startswith("/service-covers/"):
-            base, rel = SERVICE_COVERS_DIR, p[len("/service-covers/"):]
+            base, rel = LOCAL_FOLDERS["service-covers"], p[len("/service-covers/"):]
         elif p.startswith("/expertise/"):
-            base, rel = EXPERTISE_DIR, p[len("/expertise/"):]
+            base, rel = LOCAL_FOLDERS["expertise"], p[len("/expertise/"):]
         elif p.startswith("/album/"):
-            base, rel = ALBUM_DIR, p[len("/album/"):]
+            base, rel = LOCAL_FOLDERS["album"], p[len("/album/"):]
         elif p.startswith("/uploads/"):
-            base, rel = UPLOAD_DIR, p[len("/uploads/"):]
+            base, rel = LOCAL_FOLDERS["uploads"], p[len("/uploads/"):]
         else:
             base, rel = PUBLIC_DIR, p.lstrip("/")
         full = (base / rel).resolve()
@@ -751,8 +765,12 @@ class Server(ThreadingHTTPServer):
 
 
 if __name__ == "__main__":
+    # No HTTP requests are accepted if private JSON storage is unreachable.
+    initialize_data()
     httpd = Server((HOST, PORT), Handler)
     print(f"ReMate website: http://localhost:{PORT}")
+    print(f"Ảnh upload mới: IMAGE_STORAGE={IMAGE_STORAGE}")
+    print(f"Dữ liệu JSON: DATA_STORAGE={DATA_STORAGE}")
     print(f"Trang quản trị: http://localhost:{PORT}/admin.html  (user: {ADMIN_USER})")
     try:
         httpd.serve_forever()
