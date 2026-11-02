@@ -387,9 +387,9 @@ button,input,select,textarea{font:inherit}
 .rm-services-hero-copy h1 span{color:var(--g600)}
 .rm-services-hero-copy>p{font-size:16px;color:#4d6053;line-height:1.9;max-width:600px}
 .rm-services-actions{display:flex;flex-wrap:wrap;gap:12px;margin:27px 0 32px}
-.rm-services-hero-stats{border-top:1px solid var(--line);padding-top:21px;display:flex;align-items:center;gap:17px;color:var(--g700)}
-.rm-services-stat-num{font-size:43px;font-weight:800;line-height:1}
-.rm-services-hero-stats>span:last-child{font-size:11px;font-weight:800;letter-spacing:1.2px;line-height:1.7}
+.rm-services-hero-stats{border-top:1px solid var(--line);padding:18px 0 6px;display:grid;grid-template-columns:max-content minmax(0,1fr);align-items:center;column-gap:22px;min-height:125px;color:var(--g700)}
+.rm-services-stat-num{font-size:clamp(68px,7vw,92px);font-weight:800;line-height:.95;letter-spacing:-2px}
+.rm-services-hero-stats>span:last-child{font-size:clamp(17px,1.7vw,22px);font-weight:800;letter-spacing:.15px;line-height:1.33;overflow-wrap:normal}
 .rm-services-hero-visual{position:relative;border-radius:24px;overflow:hidden;min-height:440px;box-shadow:var(--shadow-lg);background:var(--g200)}
 .rm-services-hero-visual>img{width:100%;height:100%;position:absolute;inset:0;object-fit:cover}
 .rm-services-photo-label{position:absolute;bottom:20px;left:20px;display:flex;align-items:center;gap:12px;border-radius:12px;color:#fff;background:rgba(23,63,39,.93);padding:15px 19px;box-shadow:0 10px 24px #173f2740}
@@ -463,7 +463,7 @@ button,input,select,textarea{font:inherit}
  .rm-energy-visual-inner{min-height:310px}
  .rm-service-feature-media{min-height:270px}
  .rm-services-photo-label{left:12px;bottom:12px;padding:10px 12px}
- .rm-services-hero-stats>span:last-child{font-size:10px}
+ .rm-services-hero-stats{column-gap:12px;min-height:98px;padding-top:14px}.rm-services-stat-num{font-size:clamp(54px,13vw,72px)}.rm-services-hero-stats>span:last-child{font-size:clamp(13px,3.5vw,17px);letter-spacing:0;line-height:1.35}
 }
 
 /* ===== Danh sách dịch vụ chi tiết – 3 nhóm / bộ lọc ===== */
